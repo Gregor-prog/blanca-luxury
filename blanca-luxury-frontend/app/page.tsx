@@ -4,64 +4,6 @@ import { ScrollReveal } from "../components/ScrollReveal";
 export default function Home() {
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-[#FAF8F5]/70 backdrop-blur-xl border-b border-[#D0C5B5]/20 transition-all duration-500">
-        <div className="flex justify-between items-center w-full px-8 py-6 max-w-screen-2xl mx-auto">
-          {/* Brand Logo */}
-          <div className="flex-shrink-0">
-            <span className="font-serif text-[13px] uppercase letter-spacing-logo text-[#2C2420] font-semibold">
-              BLANCA LUXURY
-            </span>
-          </div>
-          {/* Navigation Links (Desktop) */}
-          <div className="hidden md:flex items-center space-x-10">
-            <a
-              className="font-body text-[12px] letter-spacing-nav text-[#C9A96E] relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-[#C9A96E]"
-              href="#"
-            >
-              Collections
-            </a>
-            <a
-              className="font-body text-[12px] letter-spacing-nav text-[#8B7D72] hover:text-[#2C2420] transition-colors"
-              href="#"
-            >
-              Decor
-            </a>
-            <a
-              className="font-body text-[12px] letter-spacing-nav text-[#8B7D72] hover:text-[#2C2420] transition-colors"
-              href="#"
-            >
-              Spaces
-            </a>
-            <a
-              className="font-body text-[12px] letter-spacing-nav text-[#8B7D72] hover:text-[#2C2420] transition-colors"
-              href="#"
-            >
-              About
-            </a>
-            <a
-              className="font-body text-[12px] letter-spacing-nav text-[#8B7D72] hover:text-[#2C2420] transition-colors"
-              href="#"
-            >
-              Contact
-            </a>
-          </div>
-          {/* Action Cluster */}
-          <div className="flex items-center space-x-6">
-            <button className="hidden md:flex items-center px-6 py-2.5 bg-[#1A1410] text-white rounded-full font-body text-[12px] border-l-4 border-[#C9A96E] hover:opacity-90 transition-opacity">
-              Concierge ↗
-            </button>
-            <div className="flex items-center text-[#2C2420]">
-              <span
-                className="material-symbols-outlined text-[20px]"
-                data-icon="chat"
-              >
-                chat
-              </span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Full-Screen Hero Section */}
       <section className="relative h-screen w-full overflow-hidden bg-stone-900">
         {/* Background Image */}
@@ -79,7 +21,7 @@ export default function Home() {
           <ScrollReveal y={30} delay={0}>
             <div className="max-w-3xl">
               {/* Eyebrow */}
-              <p className="font-sans text-[10px] md:text-[12px] uppercase tracking-[0.3em] text-primary-container mb-4">
+              <p className="font-sans text-[10px] md:text-[12px] uppercase tracking-[0.3em] text-primary-container mb-4 text-glow-premium">
                 PORT HARCOURT · LAGOS · ABUJA
               </p>
               {/* Headline */}
@@ -1007,7 +949,7 @@ export default function Home() {
                   <div className="w-8 h-[1px] bg-[#C9A96E]"></div>
                   <div className="flex flex-col">
                     <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#8B7D72] font-medium">
-                      Stella Michael Ofori
+                      Stella Michael Ofori, PhD
                     </span>
                     <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#8B7D72] mt-1">
                       Chief Executive Officer
@@ -1053,137 +995,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      {/* Footer: Luxury Blanca */}
-      <footer className="bg-[#1A1410] text-[#fff8f1] font-sans pt-16 pb-8 px-8 md:px-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          {/* TOP ROW */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12 space-y-6 md:space-y-0">
-            <div className="text-2xl font-serif text-white tracking-[0.3em] uppercase">
-              BLANCA LUXURY
-            </div>
-            <div className="flex space-x-8">
-              <a
-                className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
-                href="#"
-              >
-                Instagram
-              </a>
-              <a
-                className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
-                href="#"
-              >
-                WhatsApp
-              </a>
-            </div>
-          </div>
-
-          {/* DIVIDER */}
-          <div className="h-[1px] w-full bg-[#2E2820] mb-16"></div>
-
-          {/* MIDDLE ROW (Columns) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12 mb-20">
-            {/* Col 1: COMPANY */}
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-bold text-[#C9A96E] tracking-[0.25em] uppercase">
-                COMPANY
-              </h4>
-              <nav className="flex flex-col space-y-4">
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Home
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Collections
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  About Us
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Contact
-                </a>
-              </nav>
-            </div>
-            {/* Col 2: SERVICES */}
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-bold text-[#C9A96E] tracking-[0.25em] uppercase">
-                SERVICES
-              </h4>
-              <nav className="flex flex-col space-y-4">
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Home Furniture
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Office Furniture
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Decor
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  Drapery
-                </a>
-              </nav>
-            </div>
-            {/* Col 3: CONNECT */}
-            <div className="space-y-8">
-              <h4 className="text-[10px] font-bold text-[#C9A96E] tracking-[0.25em] uppercase">
-                CONNECT
-              </h4>
-              <div className="flex flex-col space-y-4">
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="mailto:blancaluxurydecor@gmail.com"
-                >
-                  blancaluxurydecor@gmail.com
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="tel:+2348139910974"
-                >
-                  +234 813 991 0974
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  @blanca_luxury on Instagram
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* BOTTOM BAR */}
-          <div className="pt-8 border-t border-[#2E2820] text-center">
-            <p className="text-[11px] text-[#8B7D72] tracking-widest font-light">
-              © 2025 Blanca Luxury Limited · Lagos · Port Harcourt · Crafted
-              with care.
-            </p>
-          </div>
-        </div>
-      </footer>
 
       {/* FLOATING ELEMENT: WhatsApp */}
       <div className="fixed bottom-10 right-10 z-50">
