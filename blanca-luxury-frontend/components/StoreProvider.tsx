@@ -1,0 +1,10 @@
+"use client";
+import { useRef } from "react";
+import { Provider } from "react-redux";
+import { store } from "../lib/store";
+
+export function StoreProvider({ children }: { children: React.ReactNode }) {
+  // Stable ref ensures a single store instance per browser session.
+  const storeRef = useRef(store);
+  return <Provider store={storeRef.current}>{children}</Provider>;
+}

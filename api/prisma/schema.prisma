@@ -1,0 +1,526 @@
+// Blanca Luxury — Prisma Schema
+// Read-optimized: indexes on all FK columns, common filter fields,
+// and compound indexes for the hottest query paths.
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════
+// ENUMS
+// ═══════════════════════════════════════════════════
+
+enum AdminRole {
+  SUPER_ADMIN
+  SHOWROOM_MANAGER
+}
+
+enum ProductOrigin {
+  ITALY
+  TURKEY
+  LOCAL
+  OTHER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ProjectSector {
+  RESIDENTIAL
+  COMMERCIAL
+  HOSPITALITY
+  MEDICAL
+  GOVERNMENT
+}
+
+enum ServiceInterest {
+  FURNITURE
+  DECOR
+  INTERIOR_DESIGN
+  DRAPERY
+  CONSULTATION
+}
+
+enum InquirySource {
+  WEBSITE
+  WHATSAPP
+  INSTAGRAM
+  REFERRAL
+  WALK_IN
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  QUOTED
+  CONVERTED
+  CLOSED
+}
+
+enum WhatsAppContext {
+  INQUIRY_REPLY
+  QUOTE_FOLLOW_UP
+  CONSULTATION_BOOKED
+  GENERAL
+}
+
+// ═══════════════════════════════════════════════════
+// ADMINS
+// ═══════════════════════════════════════════════════
+
+model Admin {
+  id           String    @id @default(uuid())
+  email        String    @unique              // login lookup
+  passwordHash String    @map("password_hash")
+  role         AdminRole @default(SHOWROOM_MANAGER)
+  showroomId   String?   @map("showroom_id")
+  lastLogin    DateTime? @map("last_login")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  showroom         Showroom?  @relation("AdminShowroom", fields: [showroomId], references: [id], onDelete: SetNull)
+  createdShowrooms Showroom[] @relation("ShowroomCreatedBy")
+  handledInquiries Inquiry[]  @relation("InquiryHandler")
+  auditLogs        AuditLog[]
+  posts            Post[]
+
+  // Indexes
+  @@index([showroomId])       // filter admins by showroom
+  @@index([role])             // filter by role
+
+  @@map("admins")
+}
+
+// ═══════════════════════════════════════════════════
+// SHOWROOMS
+// ═══════════════════════════════════════════════════
+
+model Showroom {
+  id              String   @id @default(uuid())
+  name            String
+  city            String
+  address         String
+  latitude        Float?
+  longitude       Float?
+  geotagMetadata  String?  @map("geotag_metadata")
+  phoneNumbers    String[] @map("phone_numbers")
+  email           String?
+  whatsappNumber  String?  @map("whatsapp_number")
+  instagramHandle String?  @map("instagram_handle")
+  coverImageUrl      String?  @map("cover_image_url")
+  coverCloudinaryId  String?  @map("cover_cloudinary_id")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdById     String?  @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  createdBy      Admin?          @relation("ShowroomCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  admins         Admin[]         @relation("AdminShowroom")
+  products       Product[]
+  collections    Collection[]
+  inquiries      Inquiry[]
+  lookbookImages LookbookImage[]
+  showroomImages ShowroomImage[]
+
+  // Indexes
+  @@index([city])             // filter by city (PH / Lagos)
+  @@index([isActive])         // listing active showrooms
+  @@index([createdById])
+
+  @@map("showrooms")
+}
+
+model ShowroomImage {
+  id            String  @id @default(uuid())
+  showroomId    String  @map("showroom_id")
+  url           String
+  cloudinaryId  String? @map("cloudinary_id")
+  caption       String?
+  displayOrder  Int     @default(0) @map("display_order")
+
+  // Relations
+  showroom Showroom @relation(fields: [showroomId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([showroomId, displayOrder])  // ordered showroom gallery
+
+  @@map("showroom_images")
+}
+
+// ═══════════════════════════════════════════════════
+// CATEGORIES
+// ═══════════════════════════════════════════════════
+
+model Category {
+  id           String  @id @default(uuid())
+  name         String
+  slug         String  @unique              // route lookup by slug
+  description  String?
+  icon         String?
+  imageUrl          String? @map("image_url")
+  imageCloudinaryId String? @map("image_cloudinary_id")
+  displayOrder Int     @default(0) @map("display_order")
+  isActive     Boolean @default(true) @map("is_active")
+
+  // Relations
+  products Product[]
+
+  // Indexes
+  @@index([isActive, displayOrder]) // menu render: active categories ordered
+
+  @@map("categories")
+}
+
+// ═══════════════════════════════════════════════════
+// PRODUCTS
+// ═══════════════════════════════════════════════════
+
+model Product {
+  id              String        @id @default(uuid())
+  name            String
+  slug            String        @unique              // route lookup
+  description     String?
+  style           String?
+  type            String?
+  origin          ProductOrigin @default(OTHER)
+  materials       String?
+  dimensions      String?
+  leadTime        String?       @map("lead_time")
+  price           Decimal?      @db.Decimal(12, 2)
+  priceOnRequest  Boolean       @default(false) @map("price_on_request")
+  categoryId      String?       @map("category_id")
+  showroomId      String?       @map("showroom_id")
+  isFeatured      Boolean       @default(false) @map("is_featured")
+  isActive        Boolean       @default(true) @map("is_active")
+  metaTitle       String?       @map("meta_title")
+  metaDescription String?       @map("meta_description")
+  createdById     String?       @map("created_by")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  category           Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  showroom           Showroom?           @relation(fields: [showroomId], references: [id], onDelete: SetNull)
+  media              ProductMedia[]
+  tags               ProductTag[]
+  collectionProducts CollectionProduct[]
+  inquiries          Inquiry[]
+  lookbookImages     LookbookImage[]
+
+  // Indexes — prioritise read patterns
+  @@index([isActive, isFeatured])            // homepage featured products
+  @@index([isActive, categoryId])            // catalogue filter by category
+  @@index([isActive, showroomId])            // showroom catalogue
+  @@index([categoryId, showroomId, isActive])// compound: category + showroom
+  @@index([origin])                          // filter Italy / Turkey
+  @@index([createdAt(sort: Desc)])           // newest products first
+  @@index([createdById])
+
+  @@map("products")
+}
+
+// ═══════════════════════════════════════════════════
+// PRODUCT MEDIA
+// ═══════════════════════════════════════════════════
+
+model ProductMedia {
+  id           String    @id @default(uuid())
+  productId    String    @map("product_id")
+  url          String
+  cloudinaryId String?   @map("cloudinary_id")
+  mediaType    MediaType @default(IMAGE) @map("media_type")
+  displayOrder Int       @default(0) @map("display_order")
+  altText      String?   @map("alt_text")
+  isPrimary    Boolean   @default(false) @map("is_primary")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([productId, isPrimary])   // fetch primary image per product
+  @@index([productId, displayOrder])// ordered gallery fetch
+
+  @@map("product_media")
+}
+
+// ═══════════════════════════════════════════════════
+// TAGS (many-to-many with Products)
+// ═══════════════════════════════════════════════════
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  // Relations
+  products ProductTag[]
+
+  @@map("tags")
+}
+
+model ProductTag {
+  productId String @map("product_id")
+  tagId     String @map("tag_id")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+  @@index([tagId])   // reverse lookup: products by tag
+
+  @@map("product_tags")
+}
+
+// ═══════════════════════════════════════════════════
+// COLLECTIONS
+// ═══════════════════════════════════════════════════
+
+model Collection {
+  id            String  @id @default(uuid())
+  name          String
+  slug          String  @unique
+  description   String?
+  badgeText     String? @map("badge_text")
+  year          Int?
+  showroomId    String? @map("showroom_id")
+  coverImageUrl String? @map("cover_image_url")
+  isFeatured    Boolean @default(false) @map("is_featured")
+  isActive      Boolean @default(true) @map("is_active")
+  displayOrder  Int     @default(0) @map("display_order")
+
+  // Relations
+  showroom Showroom?          @relation(fields: [showroomId], references: [id], onDelete: SetNull)
+  products CollectionProduct[]
+
+  // Indexes
+  @@index([isActive, isFeatured])            // homepage featured collections
+  @@index([isActive, showroomId])            // showroom-specific collections
+  @@index([isActive, displayOrder])          // ordered listing
+
+  @@map("collections")
+}
+
+model CollectionProduct {
+  collectionId String @map("collection_id")
+  productId    String @map("product_id")
+  displayOrder Int    @default(0) @map("display_order")
+
+  // Relations
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, productId])
+  @@index([collectionId, displayOrder])  // ordered products in a collection
+  @@index([productId])                   // reverse: which collections have this product
+
+  @@map("collection_products")
+}
+
+// ═══════════════════════════════════════════════════
+// PROJECTS (Portfolio)
+// ═══════════════════════════════════════════════════
+
+model Project {
+  id            String        @id @default(uuid())
+  title         String
+  slug          String        @unique
+  description   String?
+  sector        ProjectSector @default(RESIDENTIAL)
+  location      String?
+  year          Int?
+  clientName    String?       @map("client_name")
+  coverImageUrl     String?       @map("cover_image_url")
+  coverCloudinaryId String?       @map("cover_cloudinary_id")
+  isFeatured    Boolean       @default(false) @map("is_featured")
+  isActive      Boolean       @default(true) @map("is_active")
+  createdById   String?       @map("created_by")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  media        ProjectMedia[]
+  testimonials Testimonial[]
+
+  // Indexes
+  @@index([isActive, isFeatured])     // homepage featured projects
+  @@index([isActive, sector])         // filter by sector
+  @@index([isActive, year(sort: Desc)])// newest projects
+  @@index([createdAt(sort: Desc)])
+
+  @@map("projects")
+}
+
+model ProjectMedia {
+  id            String    @id @default(uuid())
+  projectId     String    @map("project_id")
+  url           String
+  cloudinaryId  String?   @map("cloudinary_id")
+  mediaType     MediaType @default(IMAGE) @map("media_type")
+  caption       String?
+  displayOrder  Int       @default(0) @map("display_order")
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([projectId, displayOrder])  // ordered gallery
+
+  @@map("project_media")
+}
+
+// ═══════════════════════════════════════════════════
+// INQUIRIES
+// ═══════════════════════════════════════════════════
+
+model Inquiry {
+  id              String           @id @default(uuid())
+  fullName        String           @map("full_name")
+  phone           String?
+  email           String?
+  message         String?
+  serviceInterest ServiceInterest? @map("service_interest")
+  showroomId      String?          @map("showroom_id")
+  productId       String?          @map("product_id")
+  source          InquirySource    @default(WEBSITE)
+  status          InquiryStatus    @default(NEW)
+  assignedTo      String?          @map("assigned_to")
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  showroom      Showroom? @relation(fields: [showroomId], references: [id], onDelete: SetNull)
+  product       Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  assignedAdmin Admin?    @relation("InquiryHandler", fields: [assignedTo], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([status, createdAt(sort: Desc)])   // admin inbox: new → old
+  @@index([showroomId, status])              // showroom manager view
+  @@index([assignedTo, status])              // assigned-to me + open
+  @@index([productId])                       // which product gets inquiries
+  @@index([createdAt(sort: Desc)])           // global timeline
+
+  @@map("inquiries")
+}
+
+// ═══════════════════════════════════════════════════
+// LOOKBOOK IMAGES
+// ═══════════════════════════════════════════════════
+
+model LookbookImage {
+  id           String  @id @default(uuid())
+  imageUrl     String  @map("image_url")
+  caption      String?
+  showroomId   String? @map("showroom_id")
+  productId    String? @map("product_id")
+  displayOrder Int     @default(0) @map("display_order")
+  isActive     Boolean @default(true) @map("is_active")
+
+  // Relations
+  showroom Showroom? @relation(fields: [showroomId], references: [id], onDelete: SetNull)
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([isActive, showroomId, displayOrder])  // ordered lookbook per showroom
+  @@index([isActive, displayOrder])              // global lookbook grid
+  @@index([productId])
+
+  @@map("lookbook_images")
+}
+
+// ═══════════════════════════════════════════════════
+// POSTS (Blog / News)
+// ═══════════════════════════════════════════════════
+
+model Post {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  content       String
+  coverImageUrl String?   @map("cover_image_url")
+  category      String?
+  authorId      String?   @map("author_id")
+  isPublished   Boolean   @default(false) @map("is_published")
+  publishedAt   DateTime? @map("published_at")
+
+  // Relations
+  author Admin? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([isPublished, publishedAt(sort: Desc)])  // public blog: published → newest
+  @@index([isPublished, category])                 // filter by category
+  @@index([authorId])
+
+  @@map("posts")
+}
+
+// ═══════════════════════════════════════════════════
+// TESTIMONIALS
+// ═══════════════════════════════════════════════════
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  clientName  String   @map("client_name")
+  clientTitle String?  @map("client_title")
+  content     String
+  rating      Int      @default(5)
+  projectId   String?  @map("project_id")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([isActive, rating(sort: Desc)])  // top-rated testimonials
+  @@index([projectId, isActive])           // testimonials for a project
+
+  @@map("testimonials")
+}
+
+// ═══════════════════════════════════════════════════
+// AUDIT LOGS
+// ═══════════════════════════════════════════════════
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  adminId    String   @map("admin_id")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  changes    Json?
+  ipAddress  String?  @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  // Indexes — write-heavy but still needs fast admin-specific reads
+  @@index([adminId, createdAt(sort: Desc)])    // per-admin activity log
+  @@index([entityType, entityId])              // what happened to this record
+  @@index([createdAt(sort: Desc)])             // global audit timeline
+
+  @@map("audit_logs")
+}
+
+// ═══════════════════════════════════════════════════
+// WHATSAPP TEMPLATES
+// ═══════════════════════════════════════════════════
+
+model WhatsAppTemplate {
+  id              String          @id @default(uuid())
+  name            String          @unique
+  messageTemplate String          @map("message_template")
+  context         WhatsAppContext @default(GENERAL)
+  isActive        Boolean         @default(true) @map("is_active")
+
+  // Indexes
+  @@index([isActive, context])  // fetch active templates by context
+
+  @@map("whatsapp_templates")
+}

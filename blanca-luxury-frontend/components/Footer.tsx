@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -10,8 +11,14 @@ export function Footer() {
         <div className="max-w-7xl mx-auto">
           {/* TOP ROW */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-12 space-y-6 md:space-y-0">
-            <div className="text-2xl font-serif text-white tracking-[0.3em] uppercase">
-              BLANCA LUXURY
+            <div className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="BLANCA LUXURY"
+                width={160}
+                height={50}
+                className="h-10 md:h-12 w-auto object-contain brightness-110"
+              />
             </div>
             <div className="flex space-x-8">
               <a
