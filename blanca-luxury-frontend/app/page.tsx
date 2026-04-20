@@ -22,7 +22,7 @@ export default function Home() {
             <div className="max-w-3xl">
               {/* Eyebrow */}
               <p className="font-sans text-[10px] md:text-[12px] uppercase tracking-[0.3em] text-primary-container mb-4 text-glow-premium">
-                PORT HARCOURT · LAGOS · ABUJA
+                PORT HARCOURT · LAGOS
               </p>
               {/* Headline */}
               <h1 className="font-serif text-5xl md:text-[72px] italic text-white leading-[1.05] mb-6 tracking-tight">
@@ -279,7 +279,7 @@ export default function Home() {
                     3
                   </div>
                   <div className="font-sans text-[11px] font-bold tracking-[0.2em] text-[#8B7D72] uppercase">
-                    Cities — PH · Lagos · Abuja
+                    Showrooms — PH · Lagos
                   </div>
                   {/* Desktop Divider */}
                   <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-16 bg-[#E8E0D5]"></div>
@@ -383,7 +383,7 @@ export default function Home() {
                   </p>
                   <a
                     className="inline-flex items-center group font-sans text-sm font-medium text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:opacity-70 transition-opacity"
-                    href="https://wa.me/aurelian"
+                    href="https://wa.me/2348139910974"
                   >
                     Inquire on WhatsApp{" "}
                     <span className="ml-2 transform group-hover:translate-x-1 transition-transform">
@@ -418,7 +418,7 @@ export default function Home() {
                   </p>
                   <a
                     className="inline-flex items-center group font-sans text-sm font-medium text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:opacity-70 transition-opacity"
-                    href="https://wa.me/aurelian"
+                    href="https://wa.me/2348139910974"
                   >
                     Inquire on WhatsApp{" "}
                     <span className="ml-2 transform group-hover:translate-x-1 transition-transform">
@@ -826,17 +826,22 @@ export default function Home() {
                     </div>
                     <div className="mt-4">
                       <p className="font-serif text-2xl md:text-[18px] text-[#2C2420] leading-relaxed max-w-[280px]">
-                        11A Bishop Aboyade Cole, Victoria Island
+                        11A Bishop Abayode Cole VI, Lagos
                       </p>
                       <div className="mt-8 space-y-1">
                         <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
-                          +234 1 234 5678
+                          +234 813 991 0974
+                        </p>
+                        <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
+                          blancaluxurydecor@gmail.com
                         </p>
                       </div>
                       <div className="mt-12">
                         <a
                           className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="#"
+                          href="https://maps.google.com/?q=Bishop+Abayode+Cole+Victoria+Island+Lagos"
+                          target="_blank"
+                          rel="noreferrer"
                         >
                           <span className="border-b border-[#C9A96E]/40 pb-1">
                             Get Directions
@@ -871,26 +876,32 @@ export default function Home() {
                         <p className="font-serif text-[18px] text-[#2C2420]">
                           Garden City Mall
                         </p>
+                        <p className="font-sans text-[13px] text-[#8B7D72] mt-1">
+                          Rumuomasi, Port Harcourt, Rivers State
+                        </p>
                       </div>
                       <div className="pb-6 border-b border-[#E8E0D5]">
                         <p className="font-serif text-[18px] text-[#2C2420]">
-                          J&apos;s Signature Hotel GRA
+                          J&apos;s Signature Hotel
+                        </p>
+                        <p className="font-sans text-[13px] text-[#8B7D72] mt-1">
+                          GRA, Port Harcourt, Rivers State
                         </p>
                       </div>
-                      <div className="">
-                        <p className="font-serif text-[18px] text-[#2C2420]">
-                          1 Ekani Chiolu Road
-                        </p>
-                      </div>
-                      <div className="mt-4 space-y-1">
+                      <div className="space-y-1">
                         <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
-                          +234 1 234 5678
+                          +234 813 991 0974
+                        </p>
+                        <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
+                          blancaluxurydecor@gmail.com
                         </p>
                       </div>
                       <div className="mt-6">
                         <a
                           className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="#"
+                          href="https://maps.google.com/?q=Garden+City+Mall+Rumuomasi+Port+Harcourt"
+                          target="_blank"
+                          rel="noreferrer"
                         >
                           <span className="border-b border-[#C9A96E]/40 pb-1">
                             Get Directions

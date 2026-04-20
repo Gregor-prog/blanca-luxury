@@ -291,21 +291,35 @@ export default function ContactPage() {
         {/* ── RIGHT: SHOWROOM CARDS ──────────────────────────────── */}
         <section className="w-full md:w-1/2 bg-[#F0EBE3] px-8 md:px-16 lg:px-24 py-20 md:py-28 flex flex-col gap-8">
 
-          {/* Lagos Card */}
+          {/* Port Harcourt Card */}
           <ScrollReveal delay={100} y={32}>
             <ShowroomCard>
               <span className="font-sans text-[10px] tracking-[0.35em] text-[#C9A96E] uppercase">
-                Lagos Showroom
+                Port Harcourt Showrooms
               </span>
-              <p className="font-serif text-xl text-[#2C2420] leading-snug">
-                Plot 14, Luxury Way, Ikoyi, Lagos, Nigeria.
-              </p>
-              <div className="flex flex-col gap-1">
+
+              <div className="space-y-5">
+                {/* Location 1 */}
+                <div className="flex flex-col gap-1">
+                  <p className="font-serif text-lg text-[#2C2420]">1. Garden City Mall</p>
+                  <p className="font-sans text-[13px] text-[#8B7D72]">Rumuomasi, Port Harcourt, Rivers State.</p>
+                </div>
+                <div className="h-px bg-[#E8E0D5] w-full" />
+
+                {/* Location 2 */}
+                <div className="flex flex-col gap-1">
+                  <p className="font-serif text-lg text-[#2C2420]">2. J&apos;s Signature Hotel</p>
+                  <p className="font-sans text-[13px] text-[#8B7D72]">GRA, Port Harcourt, Rivers State.</p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-1">
                 <p className="font-sans text-[13px] text-[#8B7D72]">+234 813 991 0974</p>
                 <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
               </div>
+
               <a
-                href="https://maps.google.com/?q=Ikoyi+Lagos+Nigeria"
+                href="https://maps.google.com/?q=Garden+City+Mall+Rumuomasi+Port+Harcourt"
                 target="_blank"
                 rel="noreferrer"
                 className="font-sans text-[11px] tracking-widest text-[#C9A96E] uppercase flex items-center gap-1 hover:opacity-70 transition-opacity w-fit"
@@ -316,42 +330,21 @@ export default function ContactPage() {
             </ShowroomCard>
           </ScrollReveal>
 
-          {/* Port Harcourt Card */}
+          {/* Lagos Card */}
           <ScrollReveal delay={250} y={32}>
             <ShowroomCard>
               <span className="font-sans text-[10px] tracking-[0.35em] text-[#C9A96E] uppercase">
-                Port Harcourt
+                Lagos Showroom
               </span>
-
-              <div className="space-y-5">
-                {/* Location 1 */}
-                <div className="flex flex-col gap-1">
-                  <p className="font-serif text-lg text-[#2C2420]">1. Garden City Mall</p>
-                  <p className="font-sans text-[13px] text-[#8B7D72]">Airport Road, Port Harcourt.</p>
-                </div>
-                <div className="h-px bg-[#E8E0D5] w-full" />
-
-                {/* Location 2 */}
-                <div className="flex flex-col gap-1">
-                  <p className="font-serif text-lg text-[#2C2420]">2. J&apos;s Signature Hotel GRA</p>
-                  <p className="font-sans text-[13px] text-[#8B7D72]">56 Tombia Extension, GRA Phase 2.</p>
-                </div>
-                <div className="h-px bg-[#E8E0D5] w-full" />
-
-                {/* Location 3 */}
-                <div className="flex flex-col gap-1">
-                  <p className="font-serif text-lg text-[#2C2420]">3. 1 Ekani Chiolu Road</p>
-                  <p className="font-sans text-[13px] text-[#8B7D72]">Off Ikwerre Road, Port Harcourt.</p>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-col gap-1">
+              <p className="font-serif text-xl text-[#2C2420] leading-snug">
+                11A Bishop Abayode Cole VI, Lagos.
+              </p>
+              <div className="flex flex-col gap-1">
                 <p className="font-sans text-[13px] text-[#8B7D72]">+234 813 991 0974</p>
                 <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
               </div>
-
               <a
-                href="https://maps.google.com/?q=Port+Harcourt+Nigeria"
+                href="https://maps.google.com/?q=Bishop+Abayode+Cole+VI+Lagos"
                 target="_blank"
                 rel="noreferrer"
                 className="font-sans text-[11px] tracking-widest text-[#C9A96E] uppercase flex items-center gap-1 hover:opacity-70 transition-opacity w-fit"

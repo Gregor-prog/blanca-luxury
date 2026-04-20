@@ -98,30 +98,35 @@ export function Footer() {
                 </Link>
               </nav>
             </div>
-            {/* Col 3: CONNECT */}
+            {/* Col 3: SHOWROOMS */}
             <div className="space-y-8">
               <h4 className="text-[10px] font-bold text-[#C9A96E] tracking-[0.25em] uppercase">
-                CONNECT
+                SHOWROOMS
               </h4>
-              <div className="flex flex-col space-y-4">
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="mailto:blancaluxurydecor@gmail.com"
-                >
-                  blancaluxurydecor@gmail.com
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="tel:+2348139910974"
-                >
-                  +234 813 991 0974
-                </a>
-                <a
-                  className="text-[13px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
-                  href="#"
-                >
-                  @blanca_luxury on Instagram
-                </a>
+              <div className="flex flex-col space-y-5">
+                <div>
+                  <p className="text-[11px] text-[#C9A96E] uppercase tracking-widest mb-1">Port Harcourt</p>
+                  <p className="text-[12px] text-[#8B7D72]">Garden City Mall, Rumuomasi</p>
+                  <p className="text-[12px] text-[#8B7D72]">J&apos;s Signature Hotel, GRA</p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-[#C9A96E] uppercase tracking-widest mb-1">Lagos</p>
+                  <p className="text-[12px] text-[#8B7D72]">11A Bishop Abayode Cole VI</p>
+                </div>
+                <div className="pt-2 flex flex-col gap-2">
+                  <a
+                    className="text-[12px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
+                    href="tel:+2348139910974"
+                  >
+                    +234 813 991 0974
+                  </a>
+                  <a
+                    className="text-[12px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
+                    href="mailto:blancaluxurydecor@gmail.com"
+                  >
+                    blancaluxurydecor@gmail.com
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -129,7 +134,7 @@ export function Footer() {
           {/* BOTTOM BAR */}
           <div className="pt-8 border-t border-[#2E2820] text-center">
             <p className="text-[11px] text-[#8B7D72] tracking-widest font-light">
-              © 2025 Blanca Luxury Limited · Lagos · Port Harcourt · Crafted
+              © 2025 Blanca Luxury Limited · Port Harcourt · Lagos · Crafted
               with care.
             </p>
           </div>
