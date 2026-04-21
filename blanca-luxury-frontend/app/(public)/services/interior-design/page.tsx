@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { useGetProjectsQuery } from "@/lib/store";
