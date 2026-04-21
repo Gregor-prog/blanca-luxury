@@ -53,7 +53,7 @@ export function InviteAdminPanel({ isOpen, onClose }: InviteAdminPanelProps) {
                 ].map((r) => (
                   <button 
                     key={r.id}
-                    onClick={() => setRole(r.id as any)}
+                    onClick={() => setRole(r.id as 'Admin' | 'Content' | 'Superadmin')}
                     className={`text-left p-4 rounded-[6px] border transition-all ${
                       role === r.id 
                       ? 'bg-admin-gold/5 border-admin-gold border-2' 

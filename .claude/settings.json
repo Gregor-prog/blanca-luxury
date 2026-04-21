@@ -5,7 +5,8 @@
       "Bash(pnpm approve-builds *)",
       "Bash(cat \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\blanca-luxury\\\\\\\\api\\\\\\\\generated\\\\\\\\prisma\\\\\\\\enums.ts\")",
       "Read(//c/Users/HP/ucheokonkwo-website/src/components/**)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(npm run *)"
     ]
   }
 }

@@ -122,7 +122,7 @@ export function InquiryDetailPanel({ inquiry, isOpen, onClose }: InquiryDetailPa
           <div className="space-y-4">
             <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-admin-text-muted">Full Inquiry Message</span>
             <div className="bg-[#0F0E0C] border border-admin-border/50 rounded-[8px] p-5 text-[13px] text-admin-text-secondary leading-relaxed italic">
-              "Hello, I'm interested in booking a bridal consultation at your London showroom for late next month. I saw the Obsidian Silk Gown on your Instagram and would love to know if it's available to try on. Thank you."
+              &ldquo;Hello, I&apos;m interested in booking a bridal consultation at your London showroom for late next month. I saw the Obsidian Silk Gown on your Instagram and would love to know if it&apos;s available to try on. Thank you.&rdquo;
             </div>
           </div>
 
