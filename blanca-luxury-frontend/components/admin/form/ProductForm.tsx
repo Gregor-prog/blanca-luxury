@@ -5,8 +5,31 @@ import Link from 'next/link';
 import { FormCard } from './FormCard';
 import { TagInput, ImageDropZone } from './CustomInputs';
 
+interface ProductData {
+  name?: string;
+  slug?: string;
+  description?: string;
+  style?: string;
+  type?: string;
+  origin?: string;
+  materials?: string;
+  dimensions?: string;
+  leadTime?: string;
+  price?: string;
+  isPriceOnRequest?: boolean;
+  status?: string;
+  isFeatured?: boolean;
+  category?: string;
+  showroom?: string;
+  collection?: string;
+  tags?: string[];
+  metaTitle?: string;
+  metaDescription?: string;
+  seoKeywords?: string[];
+}
+
 interface ProductFormProps {
-  initialData?: any;
+  initialData?: ProductData;
   mode: 'add' | 'edit';
 }
 
@@ -34,7 +57,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
     seoKeywords: initialData?.seoKeywords || ['Modern Design', 'Bespoke']
   });
 
-  const [lastSaved, setLastSaved] = useState('Just now');
+  const [lastSaved, _setLastSaved] = useState('Just now');
 
   // Slug Auto-generation
   useEffect(() => {
@@ -45,9 +68,9 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
         .replace(/(^-|-$)/g, '');
       setFormData(prev => ({ ...prev, slug: generatedSlug }));
     }
-  }, [formData.name, mode]);
+  }, [formData.name, formData.slug, mode]);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -170,7 +193,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
             <div className="flex items-center gap-4 bg-admin-surface-elevated/30 p-4 rounded-[8px] border border-admin-border/30">
               <div className="flex flex-col">
                 <span className="text-[13px] font-bold text-admin-text-primary">Price on Request</span>
-                <span className="text-[11px] text-admin-text-muted">Hide price, show 'Inquire' button</span>
+                <span className="text-[11px] text-admin-text-muted">Hide price, show &apos;Inquire&apos; button</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
