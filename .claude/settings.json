@@ -4,7 +4,8 @@
       "Bash(cd \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\blanca-luxury\\\\\\\\api\")",
       "Bash(pnpm approve-builds *)",
       "Bash(cat \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\blanca-luxury\\\\\\\\api\\\\\\\\generated\\\\\\\\prisma\\\\\\\\enums.ts\")",
-      "Read(//c/Users/HP/ucheokonkwo-website/src/components/**)"
+      "Read(//c/Users/HP/ucheokonkwo-website/src/components/**)",
+      "Bash(npx eslint *)"
     ]
   }
 }

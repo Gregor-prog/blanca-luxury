@@ -56,7 +56,7 @@ interface ImageDropZoneProps {
   height?: string;
 }
 
-export function ImageDropZone({ onUpload: _onUpload, title, height = '200px' }: ImageDropZoneProps) {
+export function ImageDropZone({ title, height = '200px' }: ImageDropZoneProps) {
   return (
     <div 
       className={`border-2 border-dashed border-admin-border/40 rounded-admin-card flex flex-col items-center justify-center gap-2 bg-admin-surface-elevated/10 hover:border-admin-gold/50 hover:bg-admin-surface-elevated/20 transition-all cursor-pointer group`}

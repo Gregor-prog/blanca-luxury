@@ -87,7 +87,7 @@ export function InviteAdminPanel({ isOpen, onClose }: InviteAdminPanelProps) {
           <div className="bg-amber-500/5 border border-amber-500/20 p-4 rounded-[8px] flex gap-4">
             <span className="material-symbols-outlined text-amber-500 text-[20px] shrink-0">info</span>
             <p className="text-[11px] text-amber-500/80 leading-normal font-medium">
-              An invitation email will be sent to this address. The link expires in 24 hours. The user's status will remain 'Pending' until they accept.
+              An invitation email will be sent to this address. The link expires in 24 hours. The user&apos;s status will remain &apos;Pending&apos; until they accept.
             </p>
           </div>
         </div>

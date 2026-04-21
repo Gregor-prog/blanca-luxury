@@ -57,7 +57,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
     seoKeywords: initialData?.seoKeywords || ['Modern Design', 'Bespoke']
   });
 
-  const [lastSaved, _setLastSaved] = useState('Just now');
+  const lastSaved = 'Just now';
 
   // Slug Auto-generation
   useEffect(() => {
