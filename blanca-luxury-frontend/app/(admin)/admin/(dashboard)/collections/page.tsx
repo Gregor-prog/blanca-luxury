@@ -48,7 +48,7 @@ const initialCollections = [
 
 export default function CollectionsPage() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [collections, setCollections] = useState(initialCollections);
+  const [collections] = useState(initialCollections);
 
   return (
     <div className="relative">

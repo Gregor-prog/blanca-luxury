@@ -2,10 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 
+interface CollectionData {
+  name?: string;
+  slug?: string;
+  badgeText?: string;
+  year?: string;
+  showroom?: string;
+  description?: string;
+  isFeatured?: boolean;
+  status?: string;
+}
+
 interface AddCollectionPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  initialData?: any;
+  initialData?: CollectionData;
 }
 
 export function AddCollectionPanel({ isOpen, onClose, initialData }: AddCollectionPanelProps) {
@@ -33,7 +44,7 @@ export function AddCollectionPanel({ isOpen, onClose, initialData }: AddCollecti
     }
   }, [formData.name, initialData]);
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

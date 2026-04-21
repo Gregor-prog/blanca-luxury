@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import type { Metadata } from "next";
 
 // ─── Intersection Observer Hook ───────────────────────────────────────────────
 function useInView(threshold = 0.15) {
@@ -337,6 +336,7 @@ export default function AboutPage() {
         <div
           ref={timelineRef}
           className="relative w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing select-none px-8 md:px-12"
+          onMouseEnter={onMouseEnter}
           onMouseDown={onMouseDown}
           onMouseLeave={onMouseLeave}
           onMouseUp={onMouseUp}
