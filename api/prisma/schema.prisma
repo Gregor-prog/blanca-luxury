@@ -1,4 +1,4 @@
-// Blanca Luxury — Prisma Schema
+// Blanca Luxury — Prisma Schema (MySQL)
 // Read-optimized: indexes on all FK columns, common filter fields,
 // and compound indexes for the hottest query paths.
 // Docs: https://pris.ly/d/prisma-schema
@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 // ═══════════════════════════════════════════════════
@@ -78,10 +78,10 @@ enum WhatsAppContext {
 
 model Admin {
   id           String    @id @default(uuid())
-  email        String    @unique              // login lookup
+  email        String    @unique
   passwordHash String    @map("password_hash")
   role         AdminRole @default(SHOWROOM_MANAGER)
-  showroomId   String?   @map("showroom_id")
+  showroomId   String?   @map("showroom_id") @db.VarChar(36)
   lastLogin    DateTime? @map("last_login")
   createdAt    DateTime  @default(now()) @map("created_at")
 
@@ -92,9 +92,8 @@ model Admin {
   auditLogs        AuditLog[]
   posts            Post[]
 
-  // Indexes
-  @@index([showroomId])       // filter admins by showroom
-  @@index([role])             // filter by role
+  @@index([showroomId])
+  @@index([role])
 
   @@map("admins")
 }
@@ -107,18 +106,19 @@ model Showroom {
   id              String   @id @default(uuid())
   name            String
   city            String
-  address         String
+  address         String   @db.VarChar(500)
   latitude        Float?
   longitude       Float?
-  geotagMetadata  String?  @map("geotag_metadata")
-  phoneNumbers    String[] @map("phone_numbers")
+  // Stored as JSON array of strings e.g. ["+234...","..."]
+  phoneNumbers    Json?    @map("phone_numbers") @db.Json
+  geotagMetadata  String?  @map("geotag_metadata") @db.Text
   email           String?
   whatsappNumber  String?  @map("whatsapp_number")
   instagramHandle String?  @map("instagram_handle")
-  coverImageUrl      String?  @map("cover_image_url")
+  coverImageUrl      String?  @map("cover_image_url") @db.VarChar(500)
   coverCloudinaryId  String?  @map("cover_cloudinary_id")
   isActive        Boolean  @default(true) @map("is_active")
-  createdById     String?  @map("created_by")
+  createdById     String?  @map("created_by") @db.VarChar(36)
   createdAt       DateTime @default(now()) @map("created_at")
 
   // Relations
@@ -130,9 +130,8 @@ model Showroom {
   lookbookImages LookbookImage[]
   showroomImages ShowroomImage[]
 
-  // Indexes
-  @@index([city])             // filter by city (PH / Lagos)
-  @@index([isActive])         // listing active showrooms
+  @@index([city])
+  @@index([isActive])
   @@index([createdById])
 
   @@map("showrooms")
@@ -140,17 +139,16 @@ model Showroom {
 
 model ShowroomImage {
   id            String  @id @default(uuid())
-  showroomId    String  @map("showroom_id")
-  url           String
-  cloudinaryId  String? @map("cloudinary_id")
+  showroomId    String  @map("showroom_id") @db.VarChar(36)
+  url           String  @db.VarChar(500)
+  cloudinaryId  String?
   caption       String?
   displayOrder  Int     @default(0) @map("display_order")
 
   // Relations
   showroom Showroom @relation(fields: [showroomId], references: [id], onDelete: Cascade)
 
-  // Indexes
-  @@index([showroomId, displayOrder])  // ordered showroom gallery
+  @@index([showroomId, displayOrder])
 
   @@map("showroom_images")
 }
@@ -160,21 +158,20 @@ model ShowroomImage {
 // ═══════════════════════════════════════════════════
 
 model Category {
-  id           String  @id @default(uuid())
-  name         String
-  slug         String  @unique              // route lookup by slug
-  description  String?
-  icon         String?
-  imageUrl          String? @map("image_url")
+  id                String  @id @default(uuid())
+  name              String
+  slug              String  @unique
+  description       String? @db.Text
+  icon              String?
+  imageUrl          String? @map("image_url") @db.VarChar(500)
   imageCloudinaryId String? @map("image_cloudinary_id")
-  displayOrder Int     @default(0) @map("display_order")
-  isActive     Boolean @default(true) @map("is_active")
+  displayOrder      Int     @default(0) @map("display_order")
+  isActive          Boolean @default(true) @map("is_active")
 
   // Relations
   products Product[]
 
-  // Indexes
-  @@index([isActive, displayOrder]) // menu render: active categories ordered
+  @@index([isActive, displayOrder])
 
   @@map("categories")
 }
@@ -186,23 +183,23 @@ model Category {
 model Product {
   id              String        @id @default(uuid())
   name            String
-  slug            String        @unique              // route lookup
-  description     String?
+  slug            String        @unique
+  description     String?       @db.Text
   style           String?
   type            String?
   origin          ProductOrigin @default(OTHER)
-  materials       String?
+  materials       String?       @db.Text
   dimensions      String?
   leadTime        String?       @map("lead_time")
   price           Decimal?      @db.Decimal(12, 2)
   priceOnRequest  Boolean       @default(false) @map("price_on_request")
-  categoryId      String?       @map("category_id")
-  showroomId      String?       @map("showroom_id")
+  categoryId      String?       @map("category_id") @db.VarChar(36)
+  showroomId      String?       @map("showroom_id") @db.VarChar(36)
   isFeatured      Boolean       @default(false) @map("is_featured")
   isActive        Boolean       @default(true) @map("is_active")
   metaTitle       String?       @map("meta_title")
-  metaDescription String?       @map("meta_description")
-  createdById     String?       @map("created_by")
+  metaDescription String?       @map("meta_description") @db.VarChar(500)
+  createdById     String?       @map("created_by") @db.VarChar(36)
   createdAt       DateTime      @default(now()) @map("created_at")
 
   // Relations
@@ -214,13 +211,12 @@ model Product {
   inquiries          Inquiry[]
   lookbookImages     LookbookImage[]
 
-  // Indexes — prioritise read patterns
-  @@index([isActive, isFeatured])            // homepage featured products
-  @@index([isActive, categoryId])            // catalogue filter by category
-  @@index([isActive, showroomId])            // showroom catalogue
-  @@index([categoryId, showroomId, isActive])// compound: category + showroom
-  @@index([origin])                          // filter Italy / Turkey
-  @@index([createdAt(sort: Desc)])           // newest products first
+  @@index([isActive, isFeatured])
+  @@index([isActive, categoryId])
+  @@index([isActive, showroomId])
+  @@index([categoryId, showroomId, isActive])
+  @@index([origin])
+  @@index([createdAt(sort: Desc)])
   @@index([createdById])
 
   @@map("products")
@@ -232,9 +228,9 @@ model Product {
 
 model ProductMedia {
   id           String    @id @default(uuid())
-  productId    String    @map("product_id")
-  url          String
-  cloudinaryId String?   @map("cloudinary_id")
+  productId    String    @map("product_id") @db.VarChar(36)
+  url          String    @db.VarChar(500)
+  cloudinaryId String?
   mediaType    MediaType @default(IMAGE) @map("media_type")
   displayOrder Int       @default(0) @map("display_order")
   altText      String?   @map("alt_text")
@@ -243,9 +239,8 @@ model ProductMedia {
   // Relations
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  // Indexes
-  @@index([productId, isPrimary])   // fetch primary image per product
-  @@index([productId, displayOrder])// ordered gallery fetch
+  @@index([productId, isPrimary])
+  @@index([productId, displayOrder])
 
   @@map("product_media")
 }
@@ -266,15 +261,15 @@ model Tag {
 }
 
 model ProductTag {
-  productId String @map("product_id")
-  tagId     String @map("tag_id")
+  productId String @map("product_id") @db.VarChar(36)
+  tagId     String @map("tag_id") @db.VarChar(36)
 
   // Relations
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([productId, tagId])
-  @@index([tagId])   // reverse lookup: products by tag
+  @@index([tagId])
 
   @@map("product_tags")
 }
@@ -287,30 +282,29 @@ model Collection {
   id            String  @id @default(uuid())
   name          String
   slug          String  @unique
-  description   String?
+  description   String? @db.Text
   badgeText     String? @map("badge_text")
   year          Int?
-  showroomId    String? @map("showroom_id")
-  coverImageUrl String? @map("cover_image_url")
+  showroomId    String? @map("showroom_id") @db.VarChar(36)
+  coverImageUrl String? @map("cover_image_url") @db.VarChar(500)
   isFeatured    Boolean @default(false) @map("is_featured")
   isActive      Boolean @default(true) @map("is_active")
   displayOrder  Int     @default(0) @map("display_order")
 
   // Relations
-  showroom Showroom?          @relation(fields: [showroomId], references: [id], onDelete: SetNull)
+  showroom Showroom?           @relation(fields: [showroomId], references: [id], onDelete: SetNull)
   products CollectionProduct[]
 
-  // Indexes
-  @@index([isActive, isFeatured])            // homepage featured collections
-  @@index([isActive, showroomId])            // showroom-specific collections
-  @@index([isActive, displayOrder])          // ordered listing
+  @@index([isActive, isFeatured])
+  @@index([isActive, showroomId])
+  @@index([isActive, displayOrder])
 
   @@map("collections")
 }
 
 model CollectionProduct {
-  collectionId String @map("collection_id")
-  productId    String @map("product_id")
+  collectionId String @map("collection_id") @db.VarChar(36)
+  productId    String @map("product_id") @db.VarChar(36)
   displayOrder Int    @default(0) @map("display_order")
 
   // Relations
@@ -318,8 +312,8 @@ model CollectionProduct {
   product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, productId])
-  @@index([collectionId, displayOrder])  // ordered products in a collection
-  @@index([productId])                   // reverse: which collections have this product
+  @@index([collectionId, displayOrder])
+  @@index([productId])
 
   @@map("collection_products")
 }
@@ -329,48 +323,46 @@ model CollectionProduct {
 // ═══════════════════════════════════════════════════
 
 model Project {
-  id            String        @id @default(uuid())
-  title         String
-  slug          String        @unique
-  description   String?
-  sector        ProjectSector @default(RESIDENTIAL)
-  location      String?
-  year          Int?
-  clientName    String?       @map("client_name")
-  coverImageUrl     String?       @map("cover_image_url")
+  id                String        @id @default(uuid())
+  title             String
+  slug              String        @unique
+  description       String?       @db.Text
+  sector            ProjectSector @default(RESIDENTIAL)
+  location          String?
+  year              Int?
+  clientName        String?       @map("client_name")
+  coverImageUrl     String?       @map("cover_image_url") @db.VarChar(500)
   coverCloudinaryId String?       @map("cover_cloudinary_id")
-  isFeatured    Boolean       @default(false) @map("is_featured")
-  isActive      Boolean       @default(true) @map("is_active")
-  createdById   String?       @map("created_by")
-  createdAt     DateTime      @default(now()) @map("created_at")
+  isFeatured        Boolean       @default(false) @map("is_featured")
+  isActive          Boolean       @default(true) @map("is_active")
+  createdById       String?       @map("created_by") @db.VarChar(36)
+  createdAt         DateTime      @default(now()) @map("created_at")
 
   // Relations
   media        ProjectMedia[]
   testimonials Testimonial[]
 
-  // Indexes
-  @@index([isActive, isFeatured])     // homepage featured projects
-  @@index([isActive, sector])         // filter by sector
-  @@index([isActive, year(sort: Desc)])// newest projects
+  @@index([isActive, isFeatured])
+  @@index([isActive, sector])
+  @@index([isActive, year(sort: Desc)])
   @@index([createdAt(sort: Desc)])
 
   @@map("projects")
 }
 
 model ProjectMedia {
-  id            String    @id @default(uuid())
-  projectId     String    @map("project_id")
-  url           String
-  cloudinaryId  String?   @map("cloudinary_id")
-  mediaType     MediaType @default(IMAGE) @map("media_type")
-  caption       String?
-  displayOrder  Int       @default(0) @map("display_order")
+  id           String    @id @default(uuid())
+  projectId    String    @map("project_id") @db.VarChar(36)
+  url          String    @db.VarChar(500)
+  cloudinaryId String?
+  mediaType    MediaType @default(IMAGE) @map("media_type")
+  caption      String?
+  displayOrder Int       @default(0) @map("display_order")
 
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  // Indexes
-  @@index([projectId, displayOrder])  // ordered gallery
+  @@index([projectId, displayOrder])
 
   @@map("project_media")
 }
@@ -384,13 +376,13 @@ model Inquiry {
   fullName        String           @map("full_name")
   phone           String?
   email           String?
-  message         String?
+  message         String?          @db.Text
   serviceInterest ServiceInterest? @map("service_interest")
-  showroomId      String?          @map("showroom_id")
-  productId       String?          @map("product_id")
+  showroomId      String?          @map("showroom_id") @db.VarChar(36)
+  productId       String?          @map("product_id") @db.VarChar(36)
   source          InquirySource    @default(WEBSITE)
   status          InquiryStatus    @default(NEW)
-  assignedTo      String?          @map("assigned_to")
+  assignedTo      String?          @map("assigned_to") @db.VarChar(36)
   createdAt       DateTime         @default(now()) @map("created_at")
 
   // Relations
@@ -398,12 +390,11 @@ model Inquiry {
   product       Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
   assignedAdmin Admin?    @relation("InquiryHandler", fields: [assignedTo], references: [id], onDelete: SetNull)
 
-  // Indexes
-  @@index([status, createdAt(sort: Desc)])   // admin inbox: new → old
-  @@index([showroomId, status])              // showroom manager view
-  @@index([assignedTo, status])              // assigned-to me + open
-  @@index([productId])                       // which product gets inquiries
-  @@index([createdAt(sort: Desc)])           // global timeline
+  @@index([status, createdAt(sort: Desc)])
+  @@index([showroomId, status])
+  @@index([assignedTo, status])
+  @@index([productId])
+  @@index([createdAt(sort: Desc)])
 
   @@map("inquiries")
 }
@@ -414,10 +405,10 @@ model Inquiry {
 
 model LookbookImage {
   id           String  @id @default(uuid())
-  imageUrl     String  @map("image_url")
+  imageUrl     String  @map("image_url") @db.VarChar(500)
   caption      String?
-  showroomId   String? @map("showroom_id")
-  productId    String? @map("product_id")
+  showroomId   String? @map("showroom_id") @db.VarChar(36)
+  productId    String? @map("product_id") @db.VarChar(36)
   displayOrder Int     @default(0) @map("display_order")
   isActive     Boolean @default(true) @map("is_active")
 
@@ -425,9 +416,8 @@ model LookbookImage {
   showroom Showroom? @relation(fields: [showroomId], references: [id], onDelete: SetNull)
   product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
 
-  // Indexes
-  @@index([isActive, showroomId, displayOrder])  // ordered lookbook per showroom
-  @@index([isActive, displayOrder])              // global lookbook grid
+  @@index([isActive, showroomId, displayOrder])
+  @@index([isActive, displayOrder])
   @@index([productId])
 
   @@map("lookbook_images")
@@ -441,19 +431,18 @@ model Post {
   id            String    @id @default(uuid())
   title         String
   slug          String    @unique
-  content       String
-  coverImageUrl String?   @map("cover_image_url")
+  content       String    @db.LongText
+  coverImageUrl String?   @map("cover_image_url") @db.VarChar(500)
   category      String?
-  authorId      String?   @map("author_id")
+  authorId      String?   @map("author_id") @db.VarChar(36)
   isPublished   Boolean   @default(false) @map("is_published")
   publishedAt   DateTime? @map("published_at")
 
   // Relations
   author Admin? @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  // Indexes
-  @@index([isPublished, publishedAt(sort: Desc)])  // public blog: published → newest
-  @@index([isPublished, category])                 // filter by category
+  @@index([isPublished, publishedAt(sort: Desc)])
+  @@index([isPublished, category])
   @@index([authorId])
 
   @@map("posts")
@@ -467,18 +456,17 @@ model Testimonial {
   id          String   @id @default(uuid())
   clientName  String   @map("client_name")
   clientTitle String?  @map("client_title")
-  content     String
+  content     String   @db.Text
   rating      Int      @default(5)
-  projectId   String?  @map("project_id")
+  projectId   String?  @map("project_id") @db.VarChar(36)
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relations
   project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
 
-  // Indexes
-  @@index([isActive, rating(sort: Desc)])  // top-rated testimonials
-  @@index([projectId, isActive])           // testimonials for a project
+  @@index([isActive, rating(sort: Desc)])
+  @@index([projectId, isActive])
 
   @@map("testimonials")
 }
@@ -489,21 +477,20 @@ model Testimonial {
 
 model AuditLog {
   id         String   @id @default(uuid())
-  adminId    String   @map("admin_id")
+  adminId    String   @map("admin_id") @db.VarChar(36)
   action     String
   entityType String   @map("entity_type")
-  entityId   String?  @map("entity_id")
-  changes    Json?
+  entityId   String?  @map("entity_id") @db.VarChar(36)
+  changes    Json?    @db.Json
   ipAddress  String?  @map("ip_address")
   createdAt  DateTime @default(now()) @map("created_at")
 
   // Relations
   admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
-  // Indexes — write-heavy but still needs fast admin-specific reads
-  @@index([adminId, createdAt(sort: Desc)])    // per-admin activity log
-  @@index([entityType, entityId])              // what happened to this record
-  @@index([createdAt(sort: Desc)])             // global audit timeline
+  @@index([adminId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@index([createdAt(sort: Desc)])
 
   @@map("audit_logs")
 }
@@ -515,12 +502,11 @@ model AuditLog {
 model WhatsAppTemplate {
   id              String          @id @default(uuid())
   name            String          @unique
-  messageTemplate String          @map("message_template")
+  messageTemplate String          @map("message_template") @db.Text
   context         WhatsAppContext @default(GENERAL)
   isActive        Boolean         @default(true) @map("is_active")
 
-  // Indexes
-  @@index([isActive, context])  // fetch active templates by context
+  @@index([isActive, context])
 
   @@map("whatsapp_templates")
 }

@@ -126,9 +126,9 @@ export class ProjectService {
       ...(isFeatured !== undefined && { isFeatured }),
       ...(search && {
         OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-          { location: { contains: search, mode: 'insensitive' } },
+          { title: { contains: search } },
+          { description: { contains: search } },
+          { location: { contains: search } },
         ],
       }),
     };

@@ -149,8 +149,8 @@ export class ProductService {
       ...(isFeatured !== undefined && { isFeatured }),
       ...(search && {
         OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search } },
+          { description: { contains: search } },
         ],
       }),
     };
