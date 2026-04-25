@@ -10,7 +10,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { ProjectSector } from '../../../generated/prisma/enums';
+import { ProjectSector } from '../../../generated/prisma';
 
 export class CreateProjectDto {
   @IsString()

@@ -13,7 +13,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentAdmin } from '../auth/decorators/current-admin.decorator';
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
-import { AdminRole } from '../../generated/prisma/enums';
+import { AdminRole } from '../../generated/prisma';
 import { AdminService } from './admin.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateAdminDto } from './dto/create-admin.dto';

@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { ProductOrigin } from '../../../generated/prisma/enums';
+import { ProductOrigin } from '../../../generated/prisma';
 
 export class CreateProductDto {
   @IsString()

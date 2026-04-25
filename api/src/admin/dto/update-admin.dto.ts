@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
-import { AdminRole } from '../../../generated/prisma/enums';
+import { AdminRole } from '../../../generated/prisma';
 
 export class UpdateAdminDto {
   @IsEnum(AdminRole)
