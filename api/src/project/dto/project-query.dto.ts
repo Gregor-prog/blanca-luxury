@@ -8,7 +8,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { ProjectSector } from '../../../generated/prisma';
+import { ProjectSector } from '@prisma/client';
 
 export class ProjectQueryDto {
   @Type(() => Number)

@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { ProductOrigin } from '../../../generated/prisma';
+import { ProductOrigin } from '@prisma/client';
 
 export class UpdateProductDto {
   @IsString()
