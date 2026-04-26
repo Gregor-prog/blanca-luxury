@@ -9,7 +9,7 @@ export declare class AuthService {
     validateAdmin(email: string, password: string): Promise<{
         id: string;
         email: string;
-        role: import("@prisma/client").$Enums.AdminRole;
+        role: import(".prisma/client").$Enums.AdminRole;
         showroomId: string | null;
         lastLogin: Date | null;
         createdAt: Date;
@@ -30,7 +30,7 @@ export declare class AuthService {
         } | null;
         id: string;
         email: string;
-        role: import("@prisma/client").$Enums.AdminRole;
+        role: import(".prisma/client").$Enums.AdminRole;
         showroomId: string | null;
         lastLogin: Date | null;
         createdAt: Date;

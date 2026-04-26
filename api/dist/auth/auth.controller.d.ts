@@ -28,7 +28,7 @@ export declare class AuthController {
         } | null;
         id: string;
         email: string;
-        role: import("@prisma/client").$Enums.AdminRole;
+        role: import(".prisma/client").$Enums.AdminRole;
         showroomId: string | null;
         lastLogin: Date | null;
         createdAt: Date;

@@ -23,10 +23,10 @@ export declare class ProjectService {
             cloudinaryId: string | null;
             caption: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
         }[];
         title: string;
-        sector: import("@prisma/client").$Enums.ProjectSector;
+        sector: import(".prisma/client").$Enums.ProjectSector;
         location: string | null;
         clientName: string | null;
     }>;
@@ -43,7 +43,7 @@ export declare class ProjectService {
                 url: string;
             }[];
             title: string;
-            sector: import("@prisma/client").$Enums.ProjectSector;
+            sector: import(".prisma/client").$Enums.ProjectSector;
             location: string | null;
         }[];
         meta: {
@@ -69,10 +69,10 @@ export declare class ProjectService {
             cloudinaryId: string | null;
             caption: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
         }[];
         title: string;
-        sector: import("@prisma/client").$Enums.ProjectSector;
+        sector: import(".prisma/client").$Enums.ProjectSector;
         location: string | null;
         clientName: string | null;
     }>;
@@ -92,10 +92,10 @@ export declare class ProjectService {
             cloudinaryId: string | null;
             caption: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
         }[];
         title: string;
-        sector: import("@prisma/client").$Enums.ProjectSector;
+        sector: import(".prisma/client").$Enums.ProjectSector;
         location: string | null;
         clientName: string | null;
     }>;
@@ -115,10 +115,10 @@ export declare class ProjectService {
             cloudinaryId: string | null;
             caption: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
         }[];
         title: string;
-        sector: import("@prisma/client").$Enums.ProjectSector;
+        sector: import(".prisma/client").$Enums.ProjectSector;
         location: string | null;
         clientName: string | null;
     }>;
@@ -141,10 +141,10 @@ export declare class ProjectService {
             cloudinaryId: string | null;
             caption: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
         }[];
         title: string;
-        sector: import("@prisma/client").$Enums.ProjectSector;
+        sector: import(".prisma/client").$Enums.ProjectSector;
         location: string | null;
         clientName: string | null;
     }>;
@@ -157,7 +157,7 @@ export declare class ProjectService {
         cloudinaryId: string | null;
         caption: string | null;
         displayOrder: number;
-        mediaType: import("@prisma/client").$Enums.MediaType;
+        mediaType: import(".prisma/client").$Enums.MediaType;
     }[]>;
     updateMedia(projectId: string, mediaId: string, caption: string): Promise<{
         id: string;
@@ -165,7 +165,7 @@ export declare class ProjectService {
         cloudinaryId: string | null;
         caption: string | null;
         displayOrder: number;
-        mediaType: import("@prisma/client").$Enums.MediaType;
+        mediaType: import(".prisma/client").$Enums.MediaType;
     }>;
     removeMedia(projectId: string, mediaId: string): Promise<{
         message: string;

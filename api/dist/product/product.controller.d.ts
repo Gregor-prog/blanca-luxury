@@ -21,7 +21,7 @@ export declare class ProductController {
             name: string;
             isActive: boolean;
             slug: string;
-            origin: import("@prisma/client").$Enums.ProductOrigin;
+            origin: import(".prisma/client").$Enums.ProductOrigin;
             leadTime: string | null;
             price: import("@prisma/client/runtime/library").Decimal | null;
             priceOnRequest: boolean;
@@ -66,7 +66,7 @@ export declare class ProductController {
         description: string | null;
         style: string | null;
         type: string | null;
-        origin: import("@prisma/client").$Enums.ProductOrigin;
+        origin: import(".prisma/client").$Enums.ProductOrigin;
         materials: string | null;
         dimensions: string | null;
         leadTime: string | null;
@@ -80,7 +80,7 @@ export declare class ProductController {
             url: string;
             cloudinaryId: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
             altText: string | null;
             isPrimary: boolean;
         }[];
@@ -112,7 +112,7 @@ export declare class ProductController {
         description: string | null;
         style: string | null;
         type: string | null;
-        origin: import("@prisma/client").$Enums.ProductOrigin;
+        origin: import(".prisma/client").$Enums.ProductOrigin;
         materials: string | null;
         dimensions: string | null;
         leadTime: string | null;
@@ -126,7 +126,7 @@ export declare class ProductController {
             url: string;
             cloudinaryId: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
             altText: string | null;
             isPrimary: boolean;
         }[];
@@ -158,7 +158,7 @@ export declare class ProductController {
         description: string | null;
         style: string | null;
         type: string | null;
-        origin: import("@prisma/client").$Enums.ProductOrigin;
+        origin: import(".prisma/client").$Enums.ProductOrigin;
         materials: string | null;
         dimensions: string | null;
         leadTime: string | null;
@@ -172,7 +172,7 @@ export declare class ProductController {
             url: string;
             cloudinaryId: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
             altText: string | null;
             isPrimary: boolean;
         }[];
@@ -204,7 +204,7 @@ export declare class ProductController {
         description: string | null;
         style: string | null;
         type: string | null;
-        origin: import("@prisma/client").$Enums.ProductOrigin;
+        origin: import(".prisma/client").$Enums.ProductOrigin;
         materials: string | null;
         dimensions: string | null;
         leadTime: string | null;
@@ -218,7 +218,7 @@ export declare class ProductController {
             url: string;
             cloudinaryId: string | null;
             displayOrder: number;
-            mediaType: import("@prisma/client").$Enums.MediaType;
+            mediaType: import(".prisma/client").$Enums.MediaType;
             altText: string | null;
             isPrimary: boolean;
         }[];
@@ -235,7 +235,7 @@ export declare class ProductController {
         url: string;
         cloudinaryId: string | null;
         displayOrder: number;
-        mediaType: import("@prisma/client").$Enums.MediaType;
+        mediaType: import(".prisma/client").$Enums.MediaType;
         altText: string | null;
         isPrimary: boolean;
     }[]>;
