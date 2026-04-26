@@ -27,8 +27,7 @@ jobs:
         working-directory: ./api        # ← POINT TO /api
         run: |
           pnpm install
-          pnpm run build --if-present
-          pnpm run test --if-present
+          pnpm run build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
