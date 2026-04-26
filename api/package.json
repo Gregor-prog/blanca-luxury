@@ -5,12 +5,8 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "pnpm": {
-    "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "prisma", "bcrypt", "@nestjs/core"]
-  },
   "scripts": {
-    "build": "prisma generate && nest build",
-    "build:ci": "prisma generate",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
