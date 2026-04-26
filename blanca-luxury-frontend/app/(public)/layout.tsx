@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/Navbar";
+import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/Footer";
 import { StoreProvider } from "@/components/StoreProvider";
+import { GrainOverlay } from "@/components/ui/GrainOverlay";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,15 +18,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=DM+Sans:wght@300;400;500;700&family=Noto+Serif:wght@400;700&family=Manrope:wght@300;400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        {/* Cormorant — display serif for headlines */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,300;1,400;1,600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-full">
+      <body className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-full" style={{ paddingTop: 72 }}>
         <StoreProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <SmoothScroll>
+            <GrainOverlay />
+            <CustomCursor />
+            <Navigation />
+            {children}
+            <Footer />
+          </SmoothScroll>
         </StoreProvider>
       </body>
     </html>

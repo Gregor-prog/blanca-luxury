@@ -1,12 +1,13 @@
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Hero } from "@/components/sections/Hero";
 
 export default function Home() {
   return (
     <>
-      
+      <Hero />
 
-      {/* Full-Screen Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden bg-stone-900">
+      {/* ↓ legacy hero removed — kept remaining sections below ↓ */}
+      <section className="relative h-screen w-full overflow-hidden bg-stone-900" style={{ display: "none" }}>
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
@@ -67,6 +68,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* ↑ hidden legacy section ends ↑ */}
 
       {/* Marquee Ticker Strip */}
       <div className="w-full h-[48px] bg-[#1A1410] overflow-hidden flex items-center">

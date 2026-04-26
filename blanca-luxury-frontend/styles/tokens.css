@@ -1,0 +1,45 @@
+:root {
+  /* Color */
+  --ivory: #FAF8F5;
+  --ivory-2: #F2EDE5;
+  --ivory-3: #E8E0D4;
+  --espresso: #1A1410;
+  --espresso-2: #120E0B;
+  --charcoal: #2C2420;
+  --stone: #8B7D72;
+  --stone-2: #6B5D54;
+  --gold: #C9A96E;
+  --gold-2: #B8924E;
+  --gold-light: #E8D5A8;
+  --cream: #F0EBE3;
+
+  /* Typography */
+  --font-display: 'Cormorant', Georgia, serif;
+  --font-body: 'Neue Haas Grotesk', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Type scale — fluid with clamp() */
+  --text-2xs: clamp(0.625rem, 0.5vw + 0.5rem, 0.75rem);
+  --text-xs: clamp(0.75rem, 0.5vw + 0.625rem, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.5vw + 0.75rem, 1rem);
+  --text-base: clamp(1rem, 0.75vw + 0.875rem, 1.125rem);
+  --text-lg: clamp(1.125rem, 1vw + 1rem, 1.375rem);
+  --text-xl: clamp(1.375rem, 1.5vw + 1.125rem, 1.75rem);
+  --text-2xl: clamp(1.75rem, 2vw + 1.5rem, 2.25rem);
+  --text-3xl: clamp(2.25rem, 3vw + 1.75rem, 3.5rem);
+  --text-4xl: clamp(3.5rem, 5vw + 2.5rem, 5.5rem);
+  --text-5xl: clamp(5rem, 7vw + 3rem, 8rem);
+
+  /* Spacing */
+  --space-section: clamp(80px, 10vw, 160px);
+  --space-gutter: clamp(16px, 4vw, 48px);
+
+  /* Motion */
+  --ease-luxury: cubic-bezier(0.25, 0.1, 0.0, 1.0);
+  --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+  --duration-fast: 200ms;
+  --duration-base: 500ms;
+  --duration-slow: 800ms;
+  --duration-crawl: 1400ms;
+}
