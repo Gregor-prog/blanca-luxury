@@ -4,6 +4,8 @@ import type {
   ProductDetail,
   ProductsQuery,
   NormalisedProducts,
+  CreateProductDto,
+  UpdateProductDto,
 } from "../types";
 
 export const productsApi = baseApi.injectEndpoints({
@@ -13,8 +15,6 @@ export const productsApi = baseApi.injectEndpoints({
         url: "/products",
         params: { isActive: true, limit: 24, ...params },
       }),
-      // Build a byId map so product-detail page can grab data in O(1)
-      // from the already-cached list instead of firing a new request.
       transformResponse: (raw: PaginatedProducts): NormalisedProducts => {
         const byId: Record<string, (typeof raw.data)[number]> = {};
         for (const p of raw.data) byId[p.id] = p;
@@ -23,15 +23,32 @@ export const productsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({
-                type: "Product" as const,
-                id,
-              })),
+              ...result.items.map(({ id }) => ({ type: "Product" as const, id })),
               { type: "Product", id: "LIST" },
             ]
           : [{ type: "Product", id: "LIST" }],
-      // Products list stays warm for 5 min
       keepUnusedDataFor: 300,
+    }),
+
+    // Admin: fetches all products regardless of isActive status
+    getAdminProducts: build.query<NormalisedProducts, ProductsQuery>({
+      query: (params = {}) => ({
+        url: "/products",
+        params: { limit: 24, ...params },
+      }),
+      transformResponse: (raw: PaginatedProducts): NormalisedProducts => {
+        const byId: Record<string, (typeof raw.data)[number]> = {};
+        for (const p of raw.data) byId[p.id] = p;
+        return { ...raw, items: raw.data, byId };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: "Product" as const, id })),
+              { type: "Product", id: "LIST" },
+            ]
+          : [{ type: "Product", id: "LIST" }],
+      keepUnusedDataFor: 0,
     }),
 
     getProductById: build.query<ProductDetail, string>({
@@ -47,8 +64,6 @@ export const productsApi = baseApi.injectEndpoints({
       keepUnusedDataFor: 300,
     }),
 
-    // Related products: fetch the same list filtered by category,
-    // then exclude the current product client-side.
     getRelatedProducts: build.query<
       NormalisedProducts,
       { categoryId: string; excludeId: string }
@@ -57,11 +72,7 @@ export const productsApi = baseApi.injectEndpoints({
         url: "/products",
         params: { isActive: true, categoryId, limit: 8 },
       }),
-      transformResponse: (
-        raw: PaginatedProducts,
-        _meta,
-        arg,
-      ): NormalisedProducts => {
+      transformResponse: (raw: PaginatedProducts, _meta, arg): NormalisedProducts => {
         const filtered = raw.data.filter((p) => p.id !== arg.excludeId);
         const byId: Record<string, (typeof filtered)[number]> = {};
         for (const p of filtered) byId[p.id] = p;
@@ -70,12 +81,37 @@ export const productsApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Product", id: "LIST" }],
       keepUnusedDataFor: 180,
     }),
+
+    createProduct: build.mutation<ProductDetail, CreateProductDto>({
+      query: (body) => ({ url: "/products", method: "POST", body }),
+      invalidatesTags: [{ type: "Product", id: "LIST" }],
+    }),
+
+    updateProduct: build.mutation<ProductDetail, { id: string; body: UpdateProductDto }>({
+      query: ({ id, body }) => ({ url: `/products/${id}`, method: "PATCH", body }),
+      invalidatesTags: (_result, _err, { id }) => [
+        { type: "Product", id },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+
+    deleteProduct: build.mutation<void, string>({
+      query: (id) => ({ url: `/products/${id}`, method: "DELETE" }),
+      invalidatesTags: (_result, _err, id) => [
+        { type: "Product", id },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
   }),
 });
 
 export const {
   useGetProductsQuery,
+  useGetAdminProductsQuery,
   useGetProductByIdQuery,
   useGetProductBySlugQuery,
   useGetRelatedProductsQuery,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
 } = productsApi;

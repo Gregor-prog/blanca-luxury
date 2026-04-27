@@ -3,12 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useLoginMutation } from '@/lib/store';
 import './../admin.css';
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+  const [login, { isLoading, error }] = useLoginMutation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
 
@@ -25,11 +28,17 @@ export default function AdminLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    try {
+      await login({ email, password }).unwrap();
+      router.push('/admin');
+    } catch {}
   };
+
+  const errorMessage = error
+    ? 'status' in error && (error as { status: number }).status === 401
+      ? 'Invalid credentials. Please try again.'
+      : 'Something went wrong. Please try again.'
+    : null;
 
   return (
     <main className="flex h-screen w-full relative bg-admin-bg admin-body overflow-hidden">
@@ -42,15 +51,13 @@ export default function AdminLoginPage() {
           className="object-cover grayscale-[20%]"
           priority
         />
-        {/* Tonal Overlay */}
         <div className="absolute inset-0 editorial-overlay"></div>
-        
-        {/* Branding Overlays */}
+
         <div className="absolute bottom-12 left-12 flex flex-col gap-1">
           <span className="text-white text-[11px] font-bold tracking-[0.3em] uppercase">BLANCA LUXURY</span>
           <span className="text-admin-text-secondary text-[11px] font-medium tracking-wider">Admin Portal</span>
         </div>
-        
+
         <div className="absolute bottom-12 right-12">
           <div className="flex items-baseline gap-4 text-white/50 text-[11px] font-medium tracking-widest uppercase">
             <span>{currentDate}</span>
@@ -62,27 +69,27 @@ export default function AdminLoginPage() {
 
       {/* RIGHT PANEL: Authentication Canvas */}
       <section className="w-full lg:w-[45%] bg-admin-bg flex flex-col items-center justify-center px-8 relative overflow-hidden">
-        {/* Mobile Logo Watermark */}
         <div className="absolute lg:hidden opacity-[0.05] select-none pointer-events-none z-0">
           <span className="text-[200px] font-black tracking-tighter text-admin-text-primary">BL</span>
         </div>
 
-        {/* Auth Container */}
         <div className="w-full max-w-[320px] z-10">
-          {/* Monogram Logo */}
           <div className="mb-10 w-10 h-10 border border-admin-gold/40 flex items-center justify-center rounded-[2px] transition-transform active:scale-95 duration-300">
             <span className="text-admin-gold text-xs font-bold tracking-tight">BL</span>
           </div>
 
-          {/* Header */}
           <header className="mb-10 space-y-2">
             <h1 className="text-admin-text-primary text-2xl font-medium tracking-tight">Welcome back.</h1>
             <p className="text-admin-text-secondary text-[12px] font-medium leading-relaxed">Sign in to manage Blanca Luxury.</p>
           </header>
 
-          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
+            {errorMessage && (
+              <div className="bg-admin-danger/10 border border-admin-danger/30 rounded-[4px] px-4 py-3">
+                <p className="text-admin-danger text-[12px] font-medium">{errorMessage}</p>
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="admin-label" htmlFor="email">Email Address</label>
               <input
@@ -97,7 +104,6 @@ export default function AdminLoginPage() {
               />
             </div>
 
-            {/* Password Field */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="admin-label" htmlFor="password">Password</label>
@@ -119,7 +125,6 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -139,7 +144,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Footer Section */}
           <footer className="mt-24 text-center">
             <p className="text-admin-text-muted text-[11px] font-medium tracking-wide">
               Blanca Luxury Admin · Authorized Personnel Only
@@ -147,7 +151,6 @@ export default function AdminLoginPage() {
           </footer>
         </div>
 
-        {/* Subtle Grain Overlay for texture */}
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')" }}></div>
       </section>
     </main>

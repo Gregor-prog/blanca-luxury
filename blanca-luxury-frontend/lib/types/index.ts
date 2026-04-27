@@ -179,3 +179,146 @@ export interface NormalisedProjects {
   limit: number;
   totalPages: number;
 }
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  admin: Admin;
+}
+
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export type AdminRole = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
+
+export interface Admin {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: AdminRole;
+  isActive: boolean;
+  createdAt: string;
+}
+
+// ─── Inquiry ──────────────────────────────────────────────────────────────────
+
+export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "SPAM";
+export type InquirySource = "WEBSITE" | "WHATSAPP" | "INSTAGRAM" | "PHONE" | "EMAIL" | "DIRECT";
+
+export interface Inquiry {
+  id: string;
+  name: string;
+  email?: string | null;
+  phone?: string | null;
+  message?: string | null;
+  interest?: string | null;
+  source: InquirySource;
+  status: InquiryStatus;
+  showroom?: Pick<Showroom, "id" | "name" | "city"> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginatedInquiries {
+  data: Inquiry[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface InquiriesQuery {
+  page?: number;
+  limit?: number;
+  status?: InquiryStatus;
+  showroomId?: string;
+  search?: string;
+}
+
+// ─── Admin Mutation DTOs ──────────────────────────────────────────────────────
+
+export interface CreateProductDto {
+  name: string;
+  categoryId?: string;
+  showroomId?: string;
+  origin?: ProductOrigin;
+  price?: string;
+  priceOnRequest?: boolean;
+  description?: string;
+  style?: string;
+  type?: string;
+  materials?: string;
+  dimensions?: string;
+  leadTime?: string;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+export type UpdateProductDto = Partial<CreateProductDto>;
+
+export interface CreateProjectDto {
+  title: string;
+  sector: ProjectSector;
+  location?: string;
+  year?: number;
+  description?: string;
+  clientName?: string;
+  coverImageUrl?: string;
+  isFeatured?: boolean;
+  isActive?: boolean;
+}
+
+export type UpdateProjectDto = Partial<CreateProjectDto>;
+
+export interface CreateCategoryDto {
+  name: string;
+  description?: string;
+  icon?: string;
+  imageUrl?: string;
+  displayOrder?: number;
+  isActive?: boolean;
+}
+
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
+
+export interface CreateShowroomDto {
+  name: string;
+  city: string;
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  phoneNumbers?: string[];
+  email?: string;
+  whatsappNumber?: string;
+  instagramHandle?: string;
+  coverImageUrl?: string;
+  isActive?: boolean;
+}
+
+export type UpdateShowroomDto = Partial<CreateShowroomDto>;
+
+export interface UpdateInquiryDto {
+  status?: InquiryStatus;
+}
+
+export interface InviteAdminDto {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: AdminRole;
+  password: string;
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}

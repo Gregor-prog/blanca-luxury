@@ -4,11 +4,15 @@ export const baseApi = createApi({
   reducerPath: "blancaApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1",
+    prepareHeaders: (headers) => {
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("bl_access_token");
+        if (token) headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
-  // All public endpoints are read-heavy — keep cache warm for a long time.
-  // Showrooms/categories almost never change → 10 min.
-  // Products/projects change on admin action → 5 min.
   keepUnusedDataFor: 300,
-  tagTypes: ["Product", "Project", "Category", "Showroom"],
+  tagTypes: ["Product", "Project", "Category", "Showroom", "Inquiry", "Admin"],
   endpoints: () => ({}),
 });

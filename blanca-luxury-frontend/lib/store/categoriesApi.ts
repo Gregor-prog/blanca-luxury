@@ -1,5 +1,5 @@
 import { baseApi } from "./baseApi";
-import type { Category } from "../types";
+import type { Category, CreateCategoryDto, UpdateCategoryDto } from "../types";
 
 export interface NormalisedCategories {
   items: Category[];
@@ -24,17 +24,62 @@ export const categoriesApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ id }) => ({
-                type: "Category" as const,
-                id,
-              })),
+              ...result.items.map(({ id }) => ({ type: "Category" as const, id })),
               { type: "Category", id: "LIST" },
             ]
           : [{ type: "Category", id: "LIST" }],
-      // Categories rarely change — keep in cache for 10 min
       keepUnusedDataFor: 600,
+    }),
+
+    // Admin: all categories regardless of isActive
+    getAllCategories: build.query<NormalisedCategories, void>({
+      query: () => ({ url: "/categories" }),
+      transformResponse: (raw: Category[]): NormalisedCategories => {
+        const bySlug: Record<string, Category> = {};
+        const byId: Record<string, Category> = {};
+        for (const c of raw) {
+          bySlug[c.slug] = c;
+          byId[c.id] = c;
+        }
+        return { items: raw, bySlug, byId };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({ type: "Category" as const, id })),
+              { type: "Category", id: "LIST" },
+            ]
+          : [{ type: "Category", id: "LIST" }],
+      keepUnusedDataFor: 0,
+    }),
+
+    createCategory: build.mutation<Category, CreateCategoryDto>({
+      query: (body) => ({ url: "/categories", method: "POST", body }),
+      invalidatesTags: [{ type: "Category", id: "LIST" }],
+    }),
+
+    updateCategory: build.mutation<Category, { id: string; body: UpdateCategoryDto }>({
+      query: ({ id, body }) => ({ url: `/categories/${id}`, method: "PATCH", body }),
+      invalidatesTags: (_result, _err, { id }) => [
+        { type: "Category", id },
+        { type: "Category", id: "LIST" },
+      ],
+    }),
+
+    deleteCategory: build.mutation<void, string>({
+      query: (id) => ({ url: `/categories/${id}`, method: "DELETE" }),
+      invalidatesTags: (_result, _err, id) => [
+        { type: "Category", id },
+        { type: "Category", id: "LIST" },
+      ],
     }),
   }),
 });
 
-export const { useGetCategoriesQuery } = categoriesApi;
+export const {
+  useGetCategoriesQuery,
+  useGetAllCategoriesQuery,
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} = categoriesApi;

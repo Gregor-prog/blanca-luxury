@@ -3,60 +3,74 @@
 import React, { useState } from 'react';
 import { InquiryRow, InquiryProps } from '@/components/admin/InquiryRow';
 import { InquiryDetailPanel } from '@/components/admin/InquiryDetailPanel';
+import { useGetInquiriesQuery } from '@/lib/store';
+import type { Inquiry, InquiryStatus, InquirySource } from '@/lib/types';
 
-const mockInquiries: InquiryProps[] = [
-  {
-    id: '8492',
-    name: 'Eleanor Vance',
-    phone: '+44 7700 900077',
-    email: 'eleanor.v@example.com',
-    interest: 'Bridal',
-    showroom: 'London',
-    source: 'Web Form',
-    status: 'New',
-    date: '10 min ago',
-    assignedTo: 'Sarah Admin'
-  },
-  {
-    id: '8493',
-    name: 'Julian Thorne',
-    phone: '+33 6 12 34 56 78',
-    email: 'j.thorne@atelier.com',
-    interest: 'Styling',
-    showroom: 'Paris',
-    source: 'WhatsApp',
-    status: 'In Progress',
-    date: '2 hours ago'
-  },
-  {
-    id: '8494',
-    name: 'Clara Bow',
-    phone: '+1 212 555 0199',
-    email: 'clara@example.com',
-    interest: 'General',
-    showroom: 'New York',
-    source: 'Email',
-    status: 'Resolved',
-    date: 'Yesterday',
-    assignedTo: 'James Manager'
-  },
-  {
-    id: '8495',
-    name: 'Arthur Blackwood',
-    phone: '+234 803 123 4567',
-    email: 'a.blackwood@vogue.ng',
-    interest: 'Curation',
-    showroom: 'Lagos',
-    source: 'Phone',
-    status: 'New',
-    date: '3 hours ago'
-  }
-];
+type RowStatus = InquiryProps['status'];
+type RowSource = InquiryProps['source'];
+
+const STATUS_MAP: Record<InquiryStatus, RowStatus> = {
+  NEW: 'New',
+  IN_PROGRESS: 'In Progress',
+  RESOLVED: 'Resolved',
+  SPAM: 'Spam',
+};
+
+const SOURCE_MAP: Record<InquirySource, RowSource> = {
+  WEBSITE: 'Web Form',
+  WHATSAPP: 'WhatsApp',
+  EMAIL: 'Email',
+  PHONE: 'Phone',
+  INSTAGRAM: 'Web Form',
+  DIRECT: 'Web Form',
+};
+
+function formatDate(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  return `${days} days ago`;
+}
+
+function toRowProps(i: Inquiry): InquiryProps {
+  return {
+    id: i.id,
+    name: i.name,
+    phone: i.phone ?? '—',
+    email: i.email ?? '—',
+    interest: i.interest ?? '—',
+    showroom: i.showroom?.name ?? '—',
+    source: SOURCE_MAP[i.source] ?? 'Web Form',
+    status: STATUS_MAP[i.status] ?? 'New',
+    date: formatDate(i.createdAt),
+  };
+}
+
+type StatusFilter = 'All' | RowStatus;
 
 export default function InquiriesPage() {
-  const [inquiries] = useState(mockInquiries);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryProps | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const apiStatus = statusFilter === 'All' ? undefined
+    : statusFilter === 'New' ? 'NEW' as const
+    : statusFilter === 'In Progress' ? 'IN_PROGRESS' as const
+    : statusFilter === 'Resolved' ? 'RESOLVED' as const
+    : 'SPAM' as const;
+
+  const { data, isLoading, isError } = useGetInquiriesQuery(
+    apiStatus ? { status: apiStatus } : {}
+  );
+
+  const inquiries = (data?.items ?? []).map(toRowProps);
+  const total = data?.total ?? 0;
+  const newCount = inquiries.filter((i) => i.status === 'New').length;
+  const inProgressCount = inquiries.filter((i) => i.status === 'In Progress').length;
 
   const handleViewDetail = (inquiry: InquiryProps) => {
     setSelectedInquiry(inquiry);
@@ -65,19 +79,19 @@ export default function InquiriesPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Page Header */}
       <header className="flex justify-between items-end mb-10">
         <div className="flex flex-col gap-2">
           <h2 className="text-[28px] font-bold tracking-tight text-[#F0EDE8]">Inquiries</h2>
           <div className="flex items-center gap-4">
-            <p className="text-[12px] text-admin-text-muted uppercase tracking-wider font-semibold">All leads from web forms and WhatsApp triggers.</p>
-            {/* Inline Stats */}
+            <p className="text-[12px] text-admin-text-muted uppercase tracking-wider font-semibold">
+              All leads from web forms and WhatsApp triggers.
+            </p>
             <div className="flex items-center gap-3 text-[10px] font-bold bg-[#1D1B19] px-3 py-1.5 rounded-[4px] border border-admin-border/30">
-              <span className="text-admin-gold">12 NEW</span>
+              <span className="text-admin-gold">{newCount} NEW</span>
               <span className="text-admin-text-muted">·</span>
-              <span className="text-orange-400">5 IN PROGRESS</span>
+              <span className="text-orange-400">{inProgressCount} IN PROGRESS</span>
               <span className="text-admin-text-muted">·</span>
-              <span className="text-[#F0EDE8]">128 TOTAL</span>
+              <span className="text-[#F0EDE8]">{total} TOTAL</span>
             </div>
           </div>
         </div>
@@ -87,26 +101,21 @@ export default function InquiriesPage() {
       <div className="bg-[#1A1916] border border-admin-border/50 rounded-[8px] p-4 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="flex bg-admin-bg p-1 rounded-[6px] border border-admin-border/30">
-            {['All', 'New', 'In Progress', 'Resolved', 'Spam'].map((s, i) => (
-              <button key={s} className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-[4px] transition-all ${i === 0 ? 'bg-admin-surface-elevated text-admin-gold' : 'text-admin-text-muted hover:text-admin-text-primary'}`}>{s}</button>
+            {(['All', 'New', 'In Progress', 'Resolved', 'Spam'] as StatusFilter[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-[4px] transition-all ${
+                  statusFilter === s
+                    ? 'bg-admin-surface-elevated text-admin-gold'
+                    : 'text-admin-text-muted hover:text-admin-text-primary'
+                }`}
+              >
+                {s}
+              </button>
             ))}
           </div>
-          
-          <select className="bg-admin-bg text-[12px] text-admin-text-primary font-bold border border-admin-border/50 rounded-[6px] px-4 py-2 outline-none focus:border-admin-gold transition-colors min-w-[160px]">
-            <option>All Showrooms</option>
-            <option>Lagos</option>
-            <option>London</option>
-            <option>Paris</option>
-          </select>
-
-          <select className="bg-admin-bg text-[12px] text-admin-text-primary font-bold border border-admin-border/50 rounded-[6px] px-4 py-2 outline-none focus:border-admin-gold transition-colors min-w-[160px]">
-            <option>All Services</option>
-            <option>Interior Design</option>
-            <option>Bridal</option>
-            <option>Furniture</option>
-          </select>
         </div>
-
         <div className="flex items-center gap-4">
           <button className="h-[38px] px-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-admin-text-primary border border-admin-border hover:border-admin-gold/50 transition-all rounded-[6px]">
             <span className="material-symbols-outlined text-[18px]">download</span>
@@ -115,7 +124,7 @@ export default function InquiriesPage() {
         </div>
       </div>
 
-      {/* Inquiries Table */}
+      {/* Table */}
       <div className="bg-[#1A1916] rounded-[8px] border border-admin-border/50 overflow-hidden shadow-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -132,22 +141,40 @@ export default function InquiriesPage() {
             </tr>
           </thead>
           <tbody>
-            {inquiries.map((inquiry) => (
-              <InquiryRow key={inquiry.id} inquiry={inquiry} onView={handleViewDetail} />
-            ))}
+            {isLoading ? (
+              <tr>
+                <td colSpan={9} className="py-20 text-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-2 border-admin-gold/30 border-t-admin-gold rounded-full animate-spin" />
+                    <p className="text-[13px] text-admin-text-muted">Loading inquiries...</p>
+                  </div>
+                </td>
+              </tr>
+            ) : isError ? (
+              <tr>
+                <td colSpan={9} className="py-20 text-center">
+                  <span className="text-[13px] text-admin-danger">Failed to load inquiries.</span>
+                </td>
+              </tr>
+            ) : inquiries.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="py-20 text-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <span className="material-symbols-outlined text-[48px] text-admin-border">mail</span>
+                    <p className="text-[13px] text-admin-text-muted font-medium">No inquiries found.</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              inquiries.map((inquiry) => (
+                <InquiryRow key={inquiry.id} inquiry={inquiry} onView={handleViewDetail} />
+              ))
+            )}
           </tbody>
         </table>
-
-        {/* Empty State Mock */}
-        {inquiries.length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center gap-4">
-            <span className="material-symbols-outlined text-[48px] text-admin-border">mail</span>
-            <p className="text-[13px] text-admin-text-muted font-medium">No inquiries found matching your filters.</p>
-          </div>
-        )}
       </div>
 
-      <InquiryDetailPanel 
+      <InquiryDetailPanel
         inquiry={selectedInquiry}
         isOpen={isPanelOpen}
         onClose={() => setIsPanelOpen(false)}
