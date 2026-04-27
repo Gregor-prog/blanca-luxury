@@ -101,7 +101,7 @@ export function Hero() {
         style={{
           position:           "absolute",
           inset:              "-20% 0 -20% 0",
-          backgroundImage:    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuD7xW9KRFeOpaeo8dsrz9VTYjRcz7HQsyAbBCCVIfzJN_xsoPkYqBUeRu_nht7QHTgV0eMGPadV37OaucI9s_jda856Urp-Or7thTKxPxkTne5xtBn-JfbbxI2Zh4OFTaWcfvCrd3TJcJHq34YuUl827SzVJFB5lLvbP1e4dh2fExJMQyoJClWNMaY_wqLy6rb08zNiFgXlKBJ7JvmWDHix4L0O4N9ljvwwkBXTu42k7TqNE_Gp59hgYq8Wfzf40yGeRnzpAtbd5lz8')",
+          backgroundImage:    "url('https://res.cloudinary.com/djh9qeaf6/image/upload/v1777315397/IMG-20260418-WA0006_fs2bpz.jpg')",
           backgroundSize:     "cover",
           backgroundPosition: "center",
           willChange:         "transform",
@@ -114,7 +114,7 @@ export function Hero() {
         style={{
           position:   "absolute",
           inset:      0,
-          background: "linear-gradient(160deg, rgba(26,20,16,0.15) 0%, rgba(26,20,16,0.0) 40%, rgba(26,20,16,0.5) 100%)",
+          background: "linear-gradient(160deg, rgba(15,13,11,0.72) 0%, rgba(15,13,11,0.45) 50%, rgba(15,13,11,0.80) 100%)",
         }}
       />
 

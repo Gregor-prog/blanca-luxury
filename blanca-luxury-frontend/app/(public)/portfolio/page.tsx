@@ -15,6 +15,15 @@ const SECTORS: FilterSector[] = [
   "MEDICAL",
 ];
 
+const SECTOR_LABELS: Record<FilterSector, string> = {
+  ALL:         "All",
+  RESIDENTIAL: "Residential",
+  COMMERCIAL:  "Commercial",
+  GOVERNMENT:  "Government",
+  HOSPITALITY: "Hospitality",
+  MEDICAL:     "Medical",
+};
+
 function coverUrl(project: ProjectListItem): string {
   return (
     project.coverImageUrl ??
@@ -56,9 +65,9 @@ export default function PortfolioPage() {
   const isSpinning = isLoading || isFetching;
 
   return (
-    <main className="pt-24 min-h-screen bg-[#fff8f1]">
+    <main className="min-h-screen bg-[#fff8f1]">
       {/* Hero */}
-      <section className="h-100 bg-[#1A1410] flex items-center px-8 md:px-16 overflow-hidden">
+      <section className="bg-[#1A1410] flex items-center px-8 md:px-16 overflow-hidden py-28 md:py-36">
         <div className="max-w-4xl space-y-6">
           <p className="text-[#C9A96E] font-bold font-sans text-[10px] tracking-[0.3em] uppercase">
             OUR WORK
@@ -86,7 +95,7 @@ export default function PortfolioPage() {
                   : "border border-[#C9A96E]/40 text-[#8B7D72] hover:bg-[#C9A96E]/5"
               }`}
             >
-              {sector}
+              {SECTOR_LABELS[sector]}
             </button>
           ))}
         </div>
@@ -120,7 +129,7 @@ export default function PortfolioPage() {
               <div className="absolute bottom-0 left-0 p-12 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div className="space-y-4">
                   <p className="text-[#C9A96E] font-sans font-bold text-[11px] tracking-widest uppercase">
-                    {[projects[0].location, projects[0].year, projects[0].sector]
+                    {[projects[0].location, projects[0].year, SECTOR_LABELS[projects[0].sector] ?? projects[0].sector]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
@@ -168,7 +177,7 @@ export default function PortfolioPage() {
                         </p>
                       </div>
                       <div className="px-3 py-1 border border-[#C9A96E]/40 text-[#C9A96E] font-sans text-[9px] tracking-widest uppercase font-bold rounded-full">
-                        {project.sector}
+                        {SECTOR_LABELS[project.sector] ?? project.sector}
                       </div>
                     </div>
                   </div>

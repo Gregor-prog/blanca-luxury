@@ -178,7 +178,7 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════════
           SECTION 1 — OPENING STATEMENT
       ══════════════════════════════════════════════════════════ */}
-      <section className="h-screen w-full flex flex-col items-center justify-center bg-[#fff8f1] px-6 text-center relative">
+      <section className="min-h-[80svh] w-full flex flex-col items-center justify-center bg-[#fff8f1] px-6 py-24 text-center relative">
         <ScrollReveal delay={200} y={24}>
           <div className="mb-8 font-sans font-medium text-[10px] uppercase tracking-[0.35em] text-[#745a27]">
             OUR STORY
@@ -205,12 +205,12 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════════
           SECTION 2 — CEO STORY
       ══════════════════════════════════════════════════════════ */}
-      <section className="flex flex-col md:flex-row min-h-screen bg-[#fbf2e7] overflow-hidden">
+      <section className="flex flex-col md:flex-row bg-[#fbf2e7] overflow-hidden">
         {/* Portrait */}
-        <div className="w-full md:w-[45%] h-[500px] md:h-auto overflow-hidden relative">
+        <div className="w-full md:w-[45%] h-[60vw] min-h-[280px] max-h-[500px] md:max-h-none md:h-auto overflow-hidden relative">
           <img
             src="https://res.cloudinary.com/drh4ma3hj/image/upload/v1776707461/IMG-20260415-WA0145_ixhzuy.jpg"
-            alt="Stella Michael Ofori — Founder & Creative Director, Blanca Luxury"
+            alt="Dr. Stella Michael Ofori — Founder & Creative Director, Blanca Luxury"
             className="w-full h-full object-cover object-top"
           />
           {/* Subtle vignette */}
@@ -218,17 +218,17 @@ export default function AboutPage() {
         </div>
 
         {/* Text */}
-        <div className="w-full md:w-[55%] flex flex-col justify-center px-8 md:px-24 py-20 bg-[#fff8f1]">
+        <div className="w-full md:w-[55%] flex flex-col justify-center px-6 md:px-24 py-12 md:py-20 bg-[#fff8f1]">
           <ScrollReveal delay={100} y={32}>
             <h2 className="font-serif italic text-4xl md:text-[40px] text-[#1e1b15] mb-10">
-              Meet Stella
+              Meet Dr. Stella
             </h2>
           </ScrollReveal>
 
           <div className="space-y-6 max-w-xl">
             <ScrollReveal delay={250} y={24}>
               <p className="font-sans text-[15px] leading-relaxed text-secondary">
-                Stella Michael Ofori founded Atelier Blanca with a singular purpose: to redefine luxury through the lens of architectural soul and personal narrative. Her journey began with a deep appreciation for the way space influences the human psyche, leading her to create environments that are as functional as they are poetic.
+                Dr. Stella Michael Ofori founded Atelier Blanca with a singular purpose: to redefine luxury through the lens of architectural soul and personal narrative. Her journey began with a deep appreciation for the way space influences the human psyche, leading her to create environments that are as functional as they are poetic.
               </p>
             </ScrollReveal>
             <ScrollReveal delay={400} y={24}>

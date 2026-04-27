@@ -459,134 +459,34 @@ export default function Home() {
             </div>
           </ScrollReveal>
 
-          {/* 7-Column Grid Desktop Layout (Scrollable on Mobile) */}
-          <div className="max-w-screen-2xl mx-auto px-8 flex overflow-x-auto md:grid md:grid-cols-3 lg:grid-cols-7 gap-4 lg:gap-6 pb-8 snap-x snap-mandatory hide-scrollbars">
-            {/* Service Card 1 */}
-            <ScrollReveal delay={0} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    grid_view
+          {/* Services Grid */}
+          <div className="max-w-screen-xl mx-auto px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-[#C9A96E]/10">
+            {[
+              { icon: 'grid_view',      title: 'Interior Architecture',  desc: 'Structural precision meets artistic vision.',           delay: 0   },
+              { icon: 'dashboard',      title: 'Space Management',       desc: 'Optimizing movement through curated flow.',             delay: 80  },
+              { icon: 'build',          title: 'Furniture Customization',desc: 'Bespoke pieces crafted for your sanctuary.',            delay: 160 },
+              { icon: 'curtains',       title: 'Drapery & Blinds',       desc: 'Refining natural light through fine textiles.',         delay: 240 },
+              { icon: 'public',         title: 'Worldwide Delivery',     desc: 'Global logistics for a borderless home.',               delay: 320 },
+              { icon: 'local_hospital', title: 'Commercial & Medical',   desc: 'Clinics, offices, and institutions elevated.',          delay: 400 },
+              { icon: 'hotel',          title: 'Hospitality Interiors',  desc: 'Hotels and suites dressed for distinction.',            delay: 480 },
+              { icon: 'yard',           title: 'Outdoor & Landscape',    desc: 'Extending luxury beyond your threshold.',               delay: 560 },
+            ].map((s) => (
+              <ScrollReveal key={s.title} delay={s.delay}>
+                <div className="group bg-[#242018] p-8 flex flex-col h-[260px] md:h-[300px] transition-all duration-500 hover:bg-[#2E2820] border-t-2 border-[#C9A96E]/20 hover:border-[#C9A96E]">
+                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px] mb-auto">
+                    {s.icon}
                   </span>
+                  <div className="mt-8">
+                    <h3 className="font-sans text-[12px] md:text-[13px] text-white tracking-widest uppercase mb-3 leading-snug">
+                      {s.title}
+                    </h3>
+                    <p className="font-sans text-[11px] md:text-[12px] text-[#8B7D72] leading-relaxed">
+                      {s.desc}
+                    </p>
+                  </div>
                 </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Interior Architecture
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Structural precision meets artistic vision.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 2 */}
-            <ScrollReveal delay={100} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    dashboard
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Space Management
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Optimizing movement through curated flow.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 3 */}
-            <ScrollReveal delay={200} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    build
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Furniture Customization
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Bespoke pieces crafted for your sanctuary.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 4 */}
-            <ScrollReveal delay={300} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    curtains
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Drapery & Blinds
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Refining natural light through textiles.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 5 */}
-            <ScrollReveal delay={400} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    public
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Worldwide Delivery
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Global logistics for a borderless home.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 6 */}
-            <ScrollReveal delay={500} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    local_hospital
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Commercial &amp; Medical
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Clinics, cancer centers &amp; offices, elevated.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
-            {/* Service Card 7 */}
-            <ScrollReveal delay={600} className="min-w-[280px] snap-center">
-              <div className="group bg-[#242018] border-t-2 border-[#C9A96E]/30 p-8 flex flex-col h-[320px] transition-all duration-500 hover:bg-[#2E2820] hover:border-[#C9A96E]">
-                <div className="mb-12">
-                  <span className="material-symbols-outlined text-[#C9A96E] text-[24px]">
-                    hotel
-                  </span>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-sans text-[13px] text-white tracking-widest uppercase mb-4">
-                    Hospitality Interiors
-                  </h3>
-                  <p className="font-sans text-[12px] text-[#8B7D72] truncate">
-                    Hotels &amp; suites dressed for distinction.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
+              </ScrollReveal>
+            ))}
           </div>
 
           {/* Decorative Image Section (Asymmetric Grid) */}
@@ -836,13 +736,13 @@ export default function Home() {
                       </p>
                       <div className="mt-8 space-y-1">
                         <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
-                          +234 1 234 5678
+                          +234 813 991 0974
                         </p>
                       </div>
                       <div className="mt-12">
                         <a
                           className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="https://maps.app.goo.gl/HTktm8CqeY968fDs8"
+                          href="https://maps.app.goo.gl/CvM6djcerwz46hXt5"
                           target="_blank"
                           rel="noreferrer"
                         >
@@ -875,40 +775,43 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="mt-4 flex flex-col space-y-6">
-                      <div className="pb-6 border-b border-[#E8E0D5]">
-                        <p className="font-serif text-[18px] text-[#2C2420]">
-                          Garden City Mall
-                        </p>
-                      </div>
-                      <div className="pb-6 border-b border-[#E8E0D5]">
-                        <p className="font-serif text-[18px] text-[#2C2420]">
-                          J&apos;s Signature Hotel GRA
-                        </p>
-                      </div>
-                      <div className="">
-                        <p className="font-serif text-[18px] text-[#2C2420]">
-                          1 Ekani Chiolu Road
-                        </p>
-                      </div>
-                      <div className="mt-4 space-y-1">
-                        <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">
-                          +234 1 234 5678
-                        </p>
-                      </div>
-                      <div className="mt-6">
+                      {/* Location 1 — Garden City Mall */}
+                      <div className="pb-6 border-b border-[#E8E0D5] flex flex-col gap-3">
+                        <div>
+                          <p className="font-sans text-[10px] text-[#C9A96E] tracking-widest uppercase mb-1">Location 1</p>
+                          <p className="font-serif text-[17px] text-[#2C2420]">Garden City Mall, Rumuomasi</p>
+                        </div>
                         <a
-                          className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="https://maps.app.goo.gl/CvM6djcerwz46hXt5"
+                          className="inline-flex items-center group/link text-[#C9A96E] text-[11px] tracking-widest font-medium uppercase transition-all w-fit"
+                          href="https://maps.app.goo.gl/PYdbwmzd5M3tso1b9"
                           target="_blank"
                           rel="noreferrer"
                         >
-                          <span className="border-b border-[#C9A96E]/40 pb-1">
-                            Get Directions
-                          </span>
-                          <span className="material-symbols-outlined ml-2 text-[16px] transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1">
-                            north_east
-                          </span>
+                          <span className="border-b border-[#C9A96E]/40 pb-0.5">Get Directions</span>
+                          <span className="material-symbols-outlined ml-1.5 text-[14px] transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1">north_east</span>
                         </a>
+                      </div>
+
+                      {/* Location 2 — J's Signature Hotel */}
+                      <div className="pb-6 border-b border-[#E8E0D5] flex flex-col gap-3">
+                        <div>
+                          <p className="font-sans text-[10px] text-[#C9A96E] tracking-widest uppercase mb-1">Location 2</p>
+                          <p className="font-serif text-[17px] text-[#2C2420]">J&apos;s Signature Hotel, GRA</p>
+                        </div>
+                        <a
+                          className="inline-flex items-center group/link text-[#C9A96E] text-[11px] tracking-widest font-medium uppercase transition-all w-fit"
+                          href="https://maps.app.goo.gl/HTktm8CqeY968fDs8"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <span className="border-b border-[#C9A96E]/40 pb-0.5">Get Directions</span>
+                          <span className="material-symbols-outlined ml-1.5 text-[14px] transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1">north_east</span>
+                        </a>
+                      </div>
+
+                      {/* Contact */}
+                      <div className="space-y-1">
+                        <p className="font-sans text-[13px] text-[#8B7D72] tracking-wide">+234 813 991 0974</p>
                       </div>
                     </div>
                   </div>

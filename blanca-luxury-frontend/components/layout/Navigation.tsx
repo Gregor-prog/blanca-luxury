@@ -163,11 +163,11 @@ function NavLink({ href, label }: { href: string; label: string }) {
   const barRef = useRef<HTMLSpanElement>(null);
 
   const enter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = "var(--charcoal)";
+    e.currentTarget.style.color = "#2C2420";
     if (barRef.current) barRef.current.style.width = "100%";
   };
   const leave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = "var(--charcoal)";
+    e.currentTarget.style.color = "#2C2420";
     if (barRef.current) barRef.current.style.width = "0";
   };
 
@@ -178,12 +178,12 @@ function NavLink({ href, label }: { href: string; label: string }) {
       onMouseLeave={leave}
       style={{
         fontFamily:     "var(--font-body)",
-        fontSize:       11,
-        fontWeight:     400,
-        letterSpacing:  "0.18em",
+        fontSize:       12,
+        fontWeight:     500,
+        letterSpacing:  "0.15em",
         textTransform:  "uppercase",
         textDecoration: "none",
-        color:          "var(--charcoal)",
+        color:          "#2C2420",
         position:       "relative",
         paddingBottom:  3,
         transition:     "color 300ms ease",
@@ -287,7 +287,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           +234 813 991 0974
         </p>
         <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--stone)", letterSpacing: "0.12em" }}>
-          @blanca_luxury
+          blancaluxurydecor@gmail.com
         </p>
       </div>
     </div>

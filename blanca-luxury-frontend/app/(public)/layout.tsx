@@ -6,6 +6,7 @@ import { GrainOverlay } from "@/components/ui/GrainOverlay";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import { SiteGuide } from "@/components/ui/SiteGuide";
+import { IntroGate } from "@/components/sections/IntroGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-full" style={{ paddingTop: 72 }}>
         <StoreProvider>
           <SmoothScroll>
+            <IntroGate />
             <GrainOverlay />
             <CustomCursor />
             <Navigation />
