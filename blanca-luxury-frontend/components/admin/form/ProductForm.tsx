@@ -25,6 +25,7 @@ interface ImageFile {
 
 interface ProductFormProps {
   mode: 'add' | 'edit';
+  initialData?: Record<string, unknown>;
 }
 
 export function ProductForm({ mode }: ProductFormProps) {

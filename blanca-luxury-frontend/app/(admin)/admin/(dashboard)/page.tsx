@@ -134,8 +134,8 @@ export default function DashboardPage() {
                 <tbody className="divide-y divide-admin-border/10">
                   {recentInquiries.map((inquiry) => (
                     <tr key={inquiry.id} className="admin-table-row group">
-                      <td className="px-6 py-4 font-medium text-admin-text-primary">{inquiry.name}</td>
-                      <td className="px-6 py-4 text-admin-text-secondary">{inquiry.interest ?? '—'}</td>
+                      <td className="px-6 py-4 font-medium text-admin-text-primary">{inquiry.fullName}</td>
+                      <td className="px-6 py-4 text-admin-text-secondary">{inquiry.serviceInterest ?? '—'}</td>
                       <td className="px-6 py-4 text-admin-text-secondary">{inquiry.showroom?.name ?? '—'}</td>
                       <td className="px-6 py-4 text-admin-text-secondary">{inquiry.source}</td>
                       <td className="px-6 py-4">
