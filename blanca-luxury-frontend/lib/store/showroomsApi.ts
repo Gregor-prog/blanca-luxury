@@ -74,6 +74,18 @@ export const showroomsApi = baseApi.injectEndpoints({
         { type: "Showroom", id: "LIST" },
       ],
     }),
+
+    uploadShowroomCover: build.mutation<Showroom, { id: string; file: File }>({
+      query: ({ id, file }) => {
+        const body = new FormData();
+        body.append("image", file);
+        return { url: `/showrooms/${id}/cover`, method: "POST", body };
+      },
+      invalidatesTags: (_result, _err, { id }) => [
+        { type: "Showroom", id },
+        { type: "Showroom", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -84,4 +96,5 @@ export const {
   useCreateShowroomMutation,
   useUpdateShowroomMutation,
   useDeleteShowroomMutation,
+  useUploadShowroomCoverMutation,
 } = showroomsApi;

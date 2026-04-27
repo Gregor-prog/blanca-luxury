@@ -347,7 +347,7 @@ export default function ContactPage() {
                     <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
                   </div>
                   <a
-                    href="https://maps.google.com/?q=Garden+City+Mall+Rumuomasi+Port+Harcourt"
+                    href="https://maps.app.goo.gl/CvM6djcerwz46hXt5"
                     target="_blank"
                     rel="noreferrer"
                     className="font-sans text-[11px] tracking-widest text-[#C9A96E] uppercase flex items-center gap-1 hover:opacity-70 transition-opacity w-fit"
@@ -371,7 +371,7 @@ export default function ContactPage() {
                     <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
                   </div>
                   <a
-                    href="https://maps.google.com/?q=Bishop+Abayode+Cole+VI+Lagos"
+                    href="https://maps.app.goo.gl/HTktm8CqeY968fDs8"
                     target="_blank"
                     rel="noreferrer"
                     className="font-sans text-[11px] tracking-widest text-[#C9A96E] uppercase flex items-center gap-1 hover:opacity-70 transition-opacity w-fit"

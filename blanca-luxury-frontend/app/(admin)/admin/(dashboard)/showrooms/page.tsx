@@ -21,6 +21,7 @@ function toCardProps(s: Showroom) {
     long: s.longitude != null ? String(s.longitude) : '—',
     isGeotagVerified: s.latitude != null && s.longitude != null,
     productCount: 0,
+    coverImageUrl: s.coverImageUrl,
   };
 }
 

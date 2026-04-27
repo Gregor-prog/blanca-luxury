@@ -7,14 +7,17 @@ export default function Home() {
       <Hero />
 
       {/* ↓ legacy hero removed — kept remaining sections below ↓ */}
-      <section className="relative h-screen w-full overflow-hidden bg-stone-900" style={{ display: "none" }}>
+      <section
+        className="relative h-screen w-full overflow-hidden bg-stone-900"
+        style={{ display: "none" }}
+      >
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
             alt="Luxury Living Room"
             className="w-full h-full object-cover object-center"
             data-alt="warmly lit luxury living room featuring a cognac leather sofa, walnut wood panels, and soft afternoon light filtering through large windows"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7xW9KRFeOpaeo8dsrz9VTYjRcz7HQsyAbBCCVIfzJN_xsoPkYqBUeRu_nht7QHTgV0eMGPadV37OaucI9s_jda856Urp-Or7thTKxPxkTne5xtBn-JfbbxI2Zh4OFTaWcfvCrd3TJcJHq34YuUl827SzVJFB5lLvbP1e4dh2fExJMQyoJClWNMaY_wqLy6rb08zNiFgXlKBJ7JvmWDHix4L0O4N9ljvwwkBXTu42k7TqNE_Gp59hgYq8Wfzf40yGeRnzpAtbd5lz8"
+            src="https://res.cloudinary.com/djh9qeaf6/image/upload/v1777315397/IMG-20260418-WA0006_fs2bpz.jpg"
           />
           <div className="absolute inset-0 hero-gradient"></div>
         </div>
@@ -839,7 +842,9 @@ export default function Home() {
                       <div className="mt-12">
                         <a
                           className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="#"
+                          href="https://maps.app.goo.gl/HTktm8CqeY968fDs8"
+                          target="_blank"
+                          rel="noreferrer"
                         >
                           <span className="border-b border-[#C9A96E]/40 pb-1">
                             Get Directions
@@ -893,7 +898,9 @@ export default function Home() {
                       <div className="mt-6">
                         <a
                           className="inline-flex items-center group/link text-[#C9A96E] text-sm tracking-widest font-medium uppercase transition-all"
-                          href="#"
+                          href="https://maps.app.goo.gl/CvM6djcerwz46hXt5"
+                          target="_blank"
+                          rel="noreferrer"
                         >
                           <span className="border-b border-[#C9A96E]/40 pb-1">
                             Get Directions
@@ -1000,7 +1007,6 @@ export default function Home() {
       </main>
 
       {/* Footer: Luxury Blanca */}
-      
 
       {/* FLOATING ELEMENT: WhatsApp */}
       <div className="fixed bottom-10 right-10 z-50">

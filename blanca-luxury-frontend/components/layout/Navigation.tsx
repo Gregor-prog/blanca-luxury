@@ -123,7 +123,7 @@ export function Navigation() {
               height:     40,
               width:      "auto",
               maxWidth:   120,
-              filter:     "brightness(0.6) sepia(1) saturate(2)",
+              filter:     "none",
               transition: "filter 600ms var(--ease-luxury)",
             }}
             priority
@@ -167,7 +167,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
     if (barRef.current) barRef.current.style.width = "100%";
   };
   const leave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = "var(--stone)";
+    e.currentTarget.style.color = "var(--charcoal)";
     if (barRef.current) barRef.current.style.width = "0";
   };
 
@@ -183,7 +183,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
         letterSpacing:  "0.18em",
         textTransform:  "uppercase",
         textDecoration: "none",
-        color:          "var(--stone)",
+        color:          "var(--charcoal)",
         position:       "relative",
         paddingBottom:  3,
         transition:     "color 300ms ease",

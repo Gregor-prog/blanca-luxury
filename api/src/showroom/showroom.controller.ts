@@ -47,13 +47,13 @@ export class ShowroomController {
     return this.showroomService.create(dto);
   }
 
-  @Roles(AdminRole.SUPER_ADMIN)
+  @Public()
   @Get()
   findAll(@Query('activeOnly') activeOnly?: string) {
     return this.showroomService.findAll(activeOnly === 'true');
   }
 
-  @Roles(AdminRole.SUPER_ADMIN)
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.showroomService.findOne(id);

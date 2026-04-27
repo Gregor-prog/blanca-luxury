@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useCreateShowroomMutation } from '@/lib/store';
+import React, { useRef, useState } from 'react';
+import Image from 'next/image';
+import { useCreateShowroomMutation, useUploadShowroomCoverMutation } from '@/lib/store';
 
 interface AddShowroomPanelProps {
   isOpen: boolean;
@@ -9,7 +10,9 @@ interface AddShowroomPanelProps {
 }
 
 export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
-  const [createShowroom, { isLoading }] = useCreateShowroomMutation();
+  const [createShowroom, { isLoading: isCreating }] = useCreateShowroomMutation();
+  const [uploadCover, { isLoading: isUploading }] = useUploadShowroomCoverMutation();
+
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
@@ -20,7 +23,11 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
   const [isActive, setIsActive] = useState(true);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addPhoneField = () => setPhones([...phones, '']);
   const updatePhone = (index: number, val: string) => {
@@ -29,10 +36,21 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
     setPhones(updated);
   };
 
+  const handleCoverSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
+  };
+
   const reset = () => {
     setName(''); setCity(''); setAddress(''); setPhones(['']);
     setWhatsapp(''); setEmail(''); setInstagram('');
-    setLat(''); setLng(''); setIsActive(true); setError('');
+    setLat(''); setLng(''); setIsActive(true);
+    setCoverFile(null);
+    if (coverPreview) URL.revokeObjectURL(coverPreview);
+    setCoverPreview(null);
+    setError('');
   };
 
   const handleSave = async () => {
@@ -42,7 +60,7 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
     }
     setError('');
     try {
-      await createShowroom({
+      const showroom = await createShowroom({
         name: name.trim(),
         city: city.trim(),
         address: address.trim(),
@@ -54,12 +72,19 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
         longitude: lng ? parseFloat(lng) : undefined,
         isActive,
       }).unwrap();
+
+      if (coverFile) {
+        await uploadCover({ id: showroom.id, file: coverFile }).unwrap();
+      }
+
       reset();
       onClose();
     } catch {
       setError('Failed to save showroom. Please try again.');
     }
   };
+
+  const isLoading = isCreating || isUploading;
 
   return (
     <>
@@ -84,6 +109,37 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
               <p className="text-admin-danger text-[12px] font-medium">{error}</p>
             </div>
           )}
+
+          {/* Cover Image */}
+          <div className="space-y-3">
+            <label className="admin-label">Cover Image</label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative w-full h-[160px] rounded-[6px] border-2 border-dashed border-admin-border/40 hover:border-admin-gold/50 transition-colors cursor-pointer overflow-hidden group"
+            >
+              {coverPreview ? (
+                <>
+                  <Image src={coverPreview} alt="Cover preview" fill className="object-cover" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-[11px] font-bold uppercase tracking-widest">Change Image</span>
+                  </div>
+                </>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-admin-text-muted group-hover:text-admin-gold transition-colors">
+                  <span className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest">Upload Cover Photo</span>
+                  <span className="text-[10px] text-admin-text-muted">JPG, PNG or WEBP · Max 20MB</span>
+                </div>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleCoverSelect}
+            />
+          </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
@@ -226,10 +282,15 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
             disabled={isLoading}
             className="admin-button-gold uppercase tracking-[0.1em] font-bold flex items-center justify-center gap-2"
           >
-            {isLoading ? (
+            {isCreating ? (
               <>
                 <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
-                Saving...
+                Creating...
+              </>
+            ) : isUploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
+                Uploading image...
               </>
             ) : 'Save Showroom'}
           </button>
