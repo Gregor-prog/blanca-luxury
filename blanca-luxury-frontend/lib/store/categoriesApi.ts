@@ -33,7 +33,7 @@ export const categoriesApi = baseApi.injectEndpoints({
 
     // Admin: all categories regardless of isActive
     getAllCategories: build.query<NormalisedCategories, void>({
-      query: () => ({ url: "/categories" }),
+      query: () => ({ url: "/categories", params: { activeOnly: "false" } }),
       transformResponse: (raw: Category[]): NormalisedCategories => {
         const bySlug: Record<string, Category> = {};
         const byId: Record<string, Category> = {};

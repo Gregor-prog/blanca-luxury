@@ -12,17 +12,17 @@ type RowSource = InquiryProps['source'];
 const STATUS_MAP: Record<InquiryStatus, RowStatus> = {
   NEW: 'New',
   IN_PROGRESS: 'In Progress',
-  RESOLVED: 'Resolved',
-  SPAM: 'Spam',
+  QUOTED: 'Quoted',
+  CONVERTED: 'Converted',
+  CLOSED: 'Closed',
 };
 
 const SOURCE_MAP: Record<InquirySource, RowSource> = {
   WEBSITE: 'Web Form',
   WHATSAPP: 'WhatsApp',
-  EMAIL: 'Email',
-  PHONE: 'Phone',
   INSTAGRAM: 'Web Form',
-  DIRECT: 'Web Form',
+  REFERRAL: 'Web Form',
+  WALK_IN: 'Web Form',
 };
 
 function formatDate(iso: string): string {
@@ -39,10 +39,10 @@ function formatDate(iso: string): string {
 function toRowProps(i: Inquiry): InquiryProps {
   return {
     id: i.id,
-    name: i.name,
+    name: i.fullName,
     phone: i.phone ?? '—',
     email: i.email ?? '—',
-    interest: i.interest ?? '—',
+    interest: i.serviceInterest ?? '—',
     showroom: i.showroom?.name ?? '—',
     source: SOURCE_MAP[i.source] ?? 'Web Form',
     status: STATUS_MAP[i.status] ?? 'New',
@@ -52,16 +52,20 @@ function toRowProps(i: Inquiry): InquiryProps {
 
 type StatusFilter = 'All' | RowStatus;
 
+const STATUS_TO_API: Record<Exclude<StatusFilter, 'All'>, InquiryStatus> = {
+  'New': 'NEW',
+  'In Progress': 'IN_PROGRESS',
+  'Quoted': 'QUOTED',
+  'Converted': 'CONVERTED',
+  'Closed': 'CLOSED',
+};
+
 export default function InquiriesPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryProps | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  const apiStatus = statusFilter === 'All' ? undefined
-    : statusFilter === 'New' ? 'NEW' as const
-    : statusFilter === 'In Progress' ? 'IN_PROGRESS' as const
-    : statusFilter === 'Resolved' ? 'RESOLVED' as const
-    : 'SPAM' as const;
+  const apiStatus = statusFilter === 'All' ? undefined : STATUS_TO_API[statusFilter];
 
   const { data, isLoading, isError } = useGetInquiriesQuery(
     apiStatus ? { status: apiStatus } : {}
@@ -101,7 +105,7 @@ export default function InquiriesPage() {
       <div className="bg-[#1A1916] border border-admin-border/50 rounded-[8px] p-4 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="flex bg-admin-bg p-1 rounded-[6px] border border-admin-border/30">
-            {(['All', 'New', 'In Progress', 'Resolved', 'Spam'] as StatusFilter[]).map((s) => (
+            {(['All', 'New', 'In Progress', 'Quoted', 'Converted', 'Closed'] as StatusFilter[]).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}

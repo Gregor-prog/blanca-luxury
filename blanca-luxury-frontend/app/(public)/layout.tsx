@@ -5,6 +5,7 @@ import { StoreProvider } from "@/components/StoreProvider";
 import { GrainOverlay } from "@/components/ui/GrainOverlay";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { SmoothScroll } from "@/components/ui/SmoothScroll";
+import { SiteGuide } from "@/components/ui/SiteGuide";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({
             <Navigation />
             {children}
             <Footer />
+            <SiteGuide />
           </SmoothScroll>
         </StoreProvider>
       </body>

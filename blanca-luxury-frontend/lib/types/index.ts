@@ -190,40 +190,38 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  admin: Admin;
 }
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
-export type AdminRole = "SUPER_ADMIN" | "ADMIN" | "MANAGER";
+export type AdminRole = "SUPER_ADMIN" | "SHOWROOM_MANAGER";
 
 export interface Admin {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
   role: AdminRole;
-  isActive: boolean;
+  showroomId: string | null;
+  lastLogin: string | null;
   createdAt: string;
+  showroom?: { id: string; name: string; city: string; address?: string } | null;
 }
 
 // ─── Inquiry ──────────────────────────────────────────────────────────────────
 
-export type InquiryStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "SPAM";
-export type InquirySource = "WEBSITE" | "WHATSAPP" | "INSTAGRAM" | "PHONE" | "EMAIL" | "DIRECT";
+export type InquiryStatus = "NEW" | "IN_PROGRESS" | "QUOTED" | "CONVERTED" | "CLOSED";
+export type InquirySource = "WEBSITE" | "WHATSAPP" | "INSTAGRAM" | "REFERRAL" | "WALK_IN";
 
 export interface Inquiry {
   id: string;
-  name: string;
+  fullName: string;
   email?: string | null;
   phone?: string | null;
   message?: string | null;
-  interest?: string | null;
+  serviceInterest?: string | null;
   source: InquirySource;
   status: InquiryStatus;
   showroom?: Pick<Showroom, "id" | "name" | "city"> | null;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface PaginatedInquiries {
@@ -312,10 +310,9 @@ export interface UpdateInquiryDto {
 
 export interface InviteAdminDto {
   email: string;
-  firstName: string;
-  lastName: string;
-  role?: AdminRole;
   password: string;
+  role?: AdminRole;
+  showroomId?: string;
 }
 
 export interface ChangePasswordDto {

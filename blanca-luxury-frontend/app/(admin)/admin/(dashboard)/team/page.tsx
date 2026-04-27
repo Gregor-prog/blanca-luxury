@@ -8,19 +8,18 @@ import type { Admin, AdminRole } from '@/lib/types';
 
 const ROLE_MAP: Record<AdminRole, TeamMemberProps['role']> = {
   SUPER_ADMIN: 'Superadmin',
-  ADMIN: 'Admin',
-  MANAGER: 'Content',
+  SHOWROOM_MANAGER: 'Admin',
 };
 
 function toRowProps(a: Admin): TeamMemberProps {
   return {
     id: a.id,
-    name: `${a.firstName} ${a.lastName}`,
+    name: a.email.split('@')[0],
     email: a.email,
     role: ROLE_MAP[a.role] ?? 'Admin',
-    showroom: '—',
-    lastLogin: '—',
-    status: a.isActive ? 'Active' : 'Suspended',
+    showroom: a.showroom?.name ?? '—',
+    lastLogin: a.lastLogin ? new Date(a.lastLogin).toLocaleDateString() : 'Never',
+    status: 'Active',
   };
 }
 

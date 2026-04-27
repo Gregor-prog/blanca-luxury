@@ -1,5 +1,10 @@
 import { baseApi } from "./baseApi";
-import type { LoginRequest, LoginResponse } from "../types";
+import type { LoginRequest, LoginResponse, Admin } from "../types";
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1";
+const SESSION_COOKIE = "bl_auth=1; path=/; max-age=86400; samesite=lax";
+const CLEAR_COOKIE = "bl_auth=; path=/; max-age=0";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -15,7 +20,17 @@ export const authApi = baseApi.injectEndpoints({
           if (typeof window !== "undefined") {
             localStorage.setItem("bl_access_token", data.accessToken);
             localStorage.setItem("bl_refresh_token", data.refreshToken);
-            localStorage.setItem("bl_admin", JSON.stringify(data.admin));
+            document.cookie = SESSION_COOKIE;
+            // Fetch admin profile separately since login doesn't return it
+            try {
+              const meRes = await fetch(`${BASE_URL}/auth/me`, {
+                headers: { Authorization: `Bearer ${data.accessToken}` },
+              });
+              if (meRes.ok) {
+                const admin = await meRes.json();
+                localStorage.setItem("bl_admin", JSON.stringify(admin));
+              }
+            } catch {}
           }
         } catch {}
       },
@@ -31,6 +46,7 @@ export const authApi = baseApi.injectEndpoints({
           localStorage.removeItem("bl_access_token");
           localStorage.removeItem("bl_refresh_token");
           localStorage.removeItem("bl_admin");
+          document.cookie = CLEAR_COOKIE;
         }
       },
     }),
@@ -55,18 +71,19 @@ export const authApi = baseApi.injectEndpoints({
 
 export const { useLoginMutation, useLogoutMutation, useRefreshTokenMutation } = authApi;
 
-// Helpers for non-hook contexts
-export const getStoredAdmin = () => {
+// ─── Non-hook helpers ─────────────────────────────────────────────────────────
+
+export const getStoredAdmin = (): Admin | null => {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem("bl_admin");
-    return raw ? JSON.parse(raw) : null;
+    return raw ? (JSON.parse(raw) as Admin) : null;
   } catch {
     return null;
   }
 };
 
-export const isAuthenticated = () => {
+export const isAuthenticated = (): boolean => {
   if (typeof window === "undefined") return false;
   return !!localStorage.getItem("bl_access_token");
 };

@@ -82,8 +82,14 @@ export const productsApi = baseApi.injectEndpoints({
       keepUnusedDataFor: 180,
     }),
 
-    createProduct: build.mutation<ProductDetail, CreateProductDto>({
-      query: (body) => ({ url: "/products", method: "POST", body }),
+    createProduct: build.mutation<ProductDetail, FormData>({
+      query: (formData) => ({
+        url: "/products",
+        method: "POST",
+        body: formData,
+        // RTK Query will omit Content-Type so the browser sets multipart boundary
+        formData: true,
+      }),
       invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
 

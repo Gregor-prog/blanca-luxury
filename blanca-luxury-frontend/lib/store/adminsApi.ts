@@ -1,10 +1,10 @@
 import { baseApi } from "./baseApi";
-import type { Admin, InviteAdminDto, ChangePasswordDto } from "../types";
+import type { Admin, InviteAdminDto } from "../types";
 
 export const adminsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getAdmins: build.query<Admin[], void>({
-      query: () => "/admin",
+      query: () => "/admins",
       providesTags: (result) =>
         result
           ? [
@@ -16,12 +16,12 @@ export const adminsApi = baseApi.injectEndpoints({
     }),
 
     inviteAdmin: build.mutation<Admin, InviteAdminDto>({
-      query: (body) => ({ url: "/admin", method: "POST", body }),
+      query: (body) => ({ url: "/admins", method: "POST", body }),
       invalidatesTags: [{ type: "Admin", id: "LIST" }],
     }),
 
     updateAdmin: build.mutation<Admin, { id: string; body: Partial<InviteAdminDto> }>({
-      query: ({ id, body }) => ({ url: `/admin/${id}`, method: "PATCH", body }),
+      query: ({ id, body }) => ({ url: `/admins/${id}`, method: "PATCH", body }),
       invalidatesTags: (_result, _err, { id }) => [
         { type: "Admin", id },
         { type: "Admin", id: "LIST" },
@@ -29,15 +29,15 @@ export const adminsApi = baseApi.injectEndpoints({
     }),
 
     deleteAdmin: build.mutation<void, string>({
-      query: (id) => ({ url: `/admin/${id}`, method: "DELETE" }),
+      query: (id) => ({ url: `/admins/${id}`, method: "DELETE" }),
       invalidatesTags: (_result, _err, id) => [
         { type: "Admin", id },
         { type: "Admin", id: "LIST" },
       ],
     }),
 
-    changePassword: build.mutation<void, ChangePasswordDto>({
-      query: (body) => ({ url: "/admin/change-password", method: "POST", body }),
+    changePassword: build.mutation<void, { id: string; currentPassword: string; newPassword: string }>({
+      query: ({ id, ...body }) => ({ url: `/admins/${id}/password`, method: "PATCH", body }),
     }),
   }),
 });

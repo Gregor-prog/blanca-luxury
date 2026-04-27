@@ -144,7 +144,7 @@ export default function DashboardPage() {
                           inquiry.status === 'IN_PROGRESS' ? 'bg-admin-warning text-admin-bg' :
                           'bg-admin-success text-admin-bg'
                         }`}>
-                          {inquiry.status === 'NEW' ? 'New' : inquiry.status === 'IN_PROGRESS' ? 'In Progress' : inquiry.status === 'RESOLVED' ? 'Resolved' : 'Spam'}
+                          {inquiry.status === 'NEW' ? 'New' : inquiry.status === 'IN_PROGRESS' ? 'In Progress' : inquiry.status === 'QUOTED' ? 'Quoted' : inquiry.status === 'CONVERTED' ? 'Converted' : 'Closed'}
                         </span>
                       </td>
                     </tr>

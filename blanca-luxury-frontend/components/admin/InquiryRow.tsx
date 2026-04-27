@@ -9,8 +9,8 @@ export interface InquiryProps {
   email: string;
   interest: string;
   showroom: string;
-  source: 'WhatsApp' | 'Web Form' | 'Email' | 'Phone';
-  status: 'New' | 'In Progress' | 'Resolved' | 'Spam';
+  source: 'WhatsApp' | 'Web Form';
+  status: 'New' | 'In Progress' | 'Quoted' | 'Converted' | 'Closed';
   date: string;
   assignedTo?: string;
 }
@@ -24,10 +24,7 @@ export function InquiryRow({ inquiry, onView }: InquiryRowProps) {
   const getSourceIcon = (source: string) => {
     switch (source) {
       case 'WhatsApp': return 'chat';
-      case 'Web Form': return 'language';
-      case 'Email': return 'mail';
-      case 'Phone': return 'call';
-      default: return 'help';
+      default: return 'language';
     }
   };
 
@@ -35,8 +32,9 @@ export function InquiryRow({ inquiry, onView }: InquiryRowProps) {
     switch (status) {
       case 'New': return 'bg-admin-gold/15 text-admin-gold';
       case 'In Progress': return 'bg-orange-500/15 text-orange-400';
-      case 'Resolved': return 'bg-admin-success/15 text-admin-success';
-      case 'Spam': return 'bg-admin-danger/15 text-admin-danger';
+      case 'Quoted': return 'bg-blue-500/15 text-blue-400';
+      case 'Converted': return 'bg-admin-success/15 text-admin-success';
+      case 'Closed': return 'bg-admin-border/30 text-admin-text-muted';
       default: return '';
     }
   };
