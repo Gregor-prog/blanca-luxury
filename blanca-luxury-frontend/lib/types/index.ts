@@ -44,6 +44,44 @@ export interface Category {
   _count?: { products: number };
 }
 
+// ─── Collection ───────────────────────────────────────────────────────────────
+
+export interface CollectionShowroom {
+  id: string;
+  name: string;
+  city: string;
+}
+
+export interface CollectionProductItem {
+  displayOrder: number;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    isActive: boolean;
+    isFeatured: boolean;
+    category?: Pick<Category, "id" | "name"> | null;
+    media: { url: string; altText?: string | null }[];
+  };
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  badgeText?: string | null;
+  year?: number | null;
+  showroomId?: string | null;
+  coverImageUrl?: string | null;
+  coverCloudinaryId?: string | null;
+  isFeatured: boolean;
+  isActive: boolean;
+  displayOrder: number;
+  showroom?: CollectionShowroom | null;
+  _count?: { products: number };
+}
+
 // ─── Showroom ─────────────────────────────────────────────────────────────────
 
 export interface ShowroomImage {
@@ -328,3 +366,26 @@ export interface ChangePasswordDto {
   currentPassword: string;
   newPassword: string;
 }
+
+// ─── Collection DTOs ──────────────────────────────────────────────────────────
+
+export interface CreateCollectionDto {
+  name: string;
+  slug?: string;
+  description?: string;
+  badgeText?: string;
+  year?: number;
+  showroomId?: string;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  displayOrder?: number;
+}
+
+export type UpdateCollectionDto = Partial<CreateCollectionDto>;
+
+export interface NormalisedCollections {
+  items: Collection[];
+  bySlug: Record<string, Collection>;
+  byId: Record<string, Collection>;
+}
+

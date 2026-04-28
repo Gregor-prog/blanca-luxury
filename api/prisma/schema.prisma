@@ -279,17 +279,18 @@ model ProductTag {
 // ═══════════════════════════════════════════════════
 
 model Collection {
-  id            String  @id @default(uuid())
-  name          String
-  slug          String  @unique
-  description   String? @db.Text
-  badgeText     String? @map("badge_text")
-  year          Int?
-  showroomId    String? @map("showroom_id") @db.VarChar(36)
-  coverImageUrl String? @map("cover_image_url") @db.VarChar(500)
-  isFeatured    Boolean @default(false) @map("is_featured")
-  isActive      Boolean @default(true) @map("is_active")
-  displayOrder  Int     @default(0) @map("display_order")
+  id               String  @id @default(uuid())
+  name             String
+  slug             String  @unique
+  description      String? @db.Text
+  badgeText        String? @map("badge_text")
+  year             Int?
+  showroomId       String? @map("showroom_id") @db.VarChar(36)
+  coverImageUrl    String? @map("cover_image_url") @db.VarChar(500)
+  coverCloudinaryId String? @map("cover_cloudinary_id")
+  isFeatured       Boolean @default(false) @map("is_featured")
+  isActive         Boolean @default(true) @map("is_active")
+  displayOrder     Int     @default(0) @map("display_order")
 
   // Relations
   showroom Showroom?           @relation(fields: [showroomId], references: [id], onDelete: SetNull)
@@ -301,6 +302,7 @@ model Collection {
 
   @@map("collections")
 }
+
 
 model CollectionProduct {
   collectionId String @map("collection_id") @db.VarChar(36)

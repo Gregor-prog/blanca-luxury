@@ -59,7 +59,8 @@ export function Sidebar() {
 
   useEffect(() => { setAdmin(getStoredAdmin()); }, []);
 
-  const isSuperAdmin = admin?.role === 'SUPER_ADMIN';
+  // Default to true while admin data is loading (null) — only restrict once role is confirmed
+  const isSuperAdmin = !admin || admin.role === 'SUPER_ADMIN';
 
   const handleLogout = async () => {
     await logout();

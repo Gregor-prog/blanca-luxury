@@ -71,6 +71,6 @@ export const baseApi = createApi({
   reducerPath: "blancaApi",
   baseQuery: baseQueryWithReauth,
   keepUnusedDataFor: 300,
-  tagTypes: ["Product", "Project", "Category", "Showroom", "Inquiry", "Admin"],
+  tagTypes: ["Product", "Project", "Category", "Collection", "Showroom", "Inquiry", "Admin"],
   endpoints: () => ({}),
 });

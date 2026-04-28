@@ -17,6 +17,7 @@ export * from "./authApi";
 export * from "./productsApi";
 export * from "./projectsApi";
 export * from "./categoriesApi";
+export * from "./collectionsApi";
 export * from "./showroomsApi";
 export * from "./inquiriesApi";
 export * from "./adminsApi";

@@ -14,6 +14,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ProductModule } from './product/product.module';
 import { ProjectModule } from './project/project.module';
 import { CategoryModule } from './category/category.module';
+import { CollectionModule } from './collection/collection.module';
 import { InquiryModule } from './inquiry/inquiry.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
@@ -37,6 +38,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     ProductModule,
     ProjectModule,
     CategoryModule,
+    CollectionModule,
     InquiryModule,
   ],
   controllers: [AppController],

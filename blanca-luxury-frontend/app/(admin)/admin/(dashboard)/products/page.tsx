@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProductFilterBar } from '@/components/admin/ProductFilterBar';
 import { ProductRow } from '@/components/admin/ProductRow';
 import { BatchActionBar } from '@/components/admin/BatchActionBar';
+import { ManageCategoriesPanel } from '@/components/admin/ManageCategoriesPanel';
 import { useGetAdminProductsQuery, useUpdateProductMutation } from '@/lib/store';
 import type { ProductListItem, ProductOrigin } from '@/lib/types';
 
@@ -40,9 +41,11 @@ function toRowProps(p: ProductListItem) {
 
 export default function ProductsPage() {
   const [page, setPage] = useState(1);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const { data, isLoading, isError } = useGetAdminProductsQuery({ page, limit: 24 });
   const [updateProduct] = useUpdateProductMutation();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
 
   const products = data?.items ?? [];
   const total = data?.total ?? 0;
@@ -74,13 +77,22 @@ export default function ProductsPage() {
             {isLoading ? '…' : total}
           </span>
         </div>
-        <Link
-          href="/admin/products/add"
-          className="bg-admin-gold text-admin-bg px-6 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2"
-        >
-          Add Product
-          <span className="material-symbols-outlined text-[18px]">add</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsCategoriesOpen(true)}
+            className="border border-admin-border bg-admin-surface-elevated/20 text-admin-text-primary px-5 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:bg-admin-surface-elevated/40 transition-colors flex items-center gap-2 shadow-md"
+          >
+            <span className="material-symbols-outlined text-[18px]">category</span>
+            Manage Categories
+          </button>
+          <Link
+            href="/admin/products/add"
+            className="bg-admin-gold text-admin-bg px-6 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-admin-gold/10"
+          >
+            Add Product
+            <span className="material-symbols-outlined text-[18px]">add</span>
+          </Link>
+        </div>
       </div>
 
       <ProductFilterBar />
@@ -174,6 +186,8 @@ export default function ProductsPage() {
       </div>
 
       <BatchActionBar selectedCount={selectedIds.length} />
+      <ManageCategoriesPanel isOpen={isCategoriesOpen} onClose={() => setIsCategoriesOpen(false)} />
     </div>
   );
 }
+

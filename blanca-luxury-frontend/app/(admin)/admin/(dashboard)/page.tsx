@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import {
   useGetAdminProductsQuery,
-  useGetAllCategoriesQuery,
+  useGetAllCollectionsQuery,
   useGetInquiriesQuery,
   useGetAllShowroomsQuery,
 } from '@/lib/store';
@@ -40,12 +40,12 @@ function StatCard({
 
 export default function DashboardPage() {
   const { data: productsData, isLoading: loadingProducts } = useGetAdminProductsQuery({ limit: 1 });
-  const { data: categoriesData, isLoading: loadingCategories } = useGetAllCategoriesQuery();
+  const { data: collectionsData, isLoading: loadingCollections } = useGetAllCollectionsQuery();
   const { data: inquiriesData, isLoading: loadingInquiries } = useGetInquiriesQuery({});
   const { data: showroomsData, isLoading: loadingShowrooms } = useGetAllShowroomsQuery();
 
   const totalProducts = productsData?.total ?? 0;
-  const activeCategories = (categoriesData?.items ?? []).filter((c) => c.isActive).length;
+  const activeCollections = (collectionsData?.items ?? []).filter((c) => c.isActive).length;
   const newInquiries = (inquiriesData?.items ?? []).filter((i) => i.status === 'NEW').length;
   const totalInquiries = inquiriesData?.total ?? 0;
   const activeShowrooms = (showroomsData?.items ?? []).filter((s) => s.isActive);
@@ -62,11 +62,11 @@ export default function DashboardPage() {
     },
     {
       label: 'Active Collections',
-      value: String(activeCategories),
-      sub: `${activeCategories} live`,
+      value: String(activeCollections),
+      sub: `${activeCollections} live`,
       subColor: 'text-admin-text-secondary',
       icon: 'collections',
-      isLoading: loadingCategories,
+      isLoading: loadingCollections,
     },
     {
       label: 'New Inquiries',
@@ -85,6 +85,7 @@ export default function DashboardPage() {
       isLoading: loadingShowrooms,
     },
   ];
+
 
   const recentInquiries = (inquiriesData?.items ?? []).slice(0, 5);
 
@@ -192,28 +193,47 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x">
-          {loadingCategories ? (
+          {loadingCollections ? (
             <div className="flex gap-4">
               {[1, 2].map((i) => (
                 <div key={i} className="min-w-[280px] h-[160px] bg-admin-surface border border-admin-border rounded-[8px] animate-pulse" />
               ))}
             </div>
-          ) : (
-            (categoriesData?.items ?? [])
+          ) : (collectionsData?.items ?? []).filter((c) => c.isActive).length > 0 ? (
+            (collectionsData?.items ?? [])
               .filter((c) => c.isActive)
-              .slice(0, 6)
               .map((col) => (
                 <div
                   key={col.id}
-                  className="min-w-[280px] h-[160px] bg-admin-surface-elevated border border-admin-border rounded-[8px] relative overflow-hidden group cursor-pointer snap-start"
+                  className="min-w-[280px] max-w-[280px] bg-admin-surface border border-admin-border p-6 rounded-[8px] relative group hover:border-admin-gold/30 transition-all duration-300 flex flex-col justify-between snap-start"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-admin-bg via-transparent to-transparent" />
-                  <div className="absolute bottom-5 left-5">
-                    <h4 className="text-[16px] font-medium text-admin-text-primary">{col.name}</h4>
-                    <p className="text-[11px] text-admin-text-muted">{col._count?.products ?? 0} Products</p>
+                  <div>
+                    <h4 className="text-[15px] font-medium text-admin-text-primary tracking-tight group-hover:text-admin-gold transition-colors">
+                      {col.name}
+                    </h4>
+                    {col.badgeText && (
+                      <span className="inline-block mt-1 border border-admin-gold/30 text-admin-gold px-1.5 py-0.5 rounded-[2px] text-[9px] font-bold uppercase tracking-wider">
+                        {col.badgeText}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-admin-border/50">
+                    <span className="text-[12px] text-admin-text-secondary">
+                      <strong className="text-admin-text-primary">{col._count?.products ?? 0}</strong> products
+                    </span>
+                    <Link
+                      href={`/admin/collections/${col.id}/products`}
+                      className="text-[12px] font-medium text-admin-gold hover:opacity-80 transition-opacity"
+                    >
+                      Manage →
+                    </Link>
                   </div>
                 </div>
               ))
+          ) : (
+            <div className="w-full bg-admin-surface/20 border border-admin-border border-dashed p-8 text-center rounded-[8px]">
+              <p className="text-[12px] text-admin-text-muted">No active collections found.</p>
+            </div>
           )}
           <Link
             href="/admin/collections"
