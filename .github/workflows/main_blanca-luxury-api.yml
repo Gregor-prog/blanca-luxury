@@ -24,21 +24,18 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install, build, and test
-        working-directory: ./api        # ← POINT TO /api
+        working-directory: ./api
         run: |
           pnpm install
           pnpm run build
           pnpm prune --prod
-
-      - name: Zip artifact for deployment
-        working-directory: ./api
-        run: zip -r release.zip . -x "*.git*" "src/*" "test/*"
+          echo -e "[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=false" > .deployment
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./api/release.zip
+          path: ./api
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,4 +63,4 @@ jobs:
         with:
           app-name: 'blanca-luxury-api'
           slot-name: 'Production'
-          package: release.zip
+          package: .
