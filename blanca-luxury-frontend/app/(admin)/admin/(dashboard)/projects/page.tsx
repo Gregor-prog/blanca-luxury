@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useGetAdminProjectsQuery, useDeleteProjectMutation } from '@/lib/store';
+import { RoleGuard } from '@/components/admin/RoleGuard';
 import type { ProjectListItem, ProjectSector } from '@/lib/types';
 
 const SECTORS: Array<{ label: string; value: ProjectSector | 'ALL' }> = [
@@ -102,6 +103,10 @@ function ProjectCard({
 }
 
 export default function ProjectsPage() {
+  return <RoleGuard allowed={['SUPER_ADMIN']}><ProjectsContent /></RoleGuard>;
+}
+
+function ProjectsContent() {
   const [sectorFilter, setSectorFilter] = useState<ProjectSector | 'ALL'>('ALL');
   const [deleteProject] = useDeleteProjectMutation();
 

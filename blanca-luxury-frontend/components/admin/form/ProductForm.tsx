@@ -9,6 +9,7 @@ import {
   useGetAllCategoriesQuery,
   useGetAllShowroomsQuery,
 } from '@/lib/store';
+import { getStoredAdmin } from '@/lib/store/authApi';
 import type { ProductOrigin } from '@/lib/types';
 
 const ORIGINS: { value: ProductOrigin; label: string; flag: string }[] = [
@@ -61,6 +62,16 @@ export function ProductForm({ mode }: ProductFormProps) {
   // ── Status / feedback ───────────────────────────────────────────────────────
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  // ── Pre-select showroom for SHOWROOM_MANAGER ────────────────────────────────
+  useEffect(() => {
+    if (mode === 'add') {
+      const admin = getStoredAdmin();
+      if (admin?.role === 'SHOWROOM_MANAGER' && admin.showroomId) {
+        setShowroomId(admin.showroomId);
+      }
+    }
+  }, [mode]);
 
   // ── Slug auto-generation ─────────────────────────────────────────────────────
   useEffect(() => {

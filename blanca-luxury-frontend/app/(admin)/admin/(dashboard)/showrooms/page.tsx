@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ShowroomCard } from '@/components/admin/ShowroomCard';
 import { AddShowroomPanel } from '@/components/admin/AddShowroomPanel';
+import { RoleGuard } from '@/components/admin/RoleGuard';
 import { useGetAllShowroomsQuery } from '@/lib/store';
 import type { Showroom } from '@/lib/types';
 
@@ -26,6 +27,10 @@ function toCardProps(s: Showroom) {
 }
 
 export default function ShowroomsPage() {
+  return <RoleGuard allowed={['SUPER_ADMIN']}><ShowroomsContent /></RoleGuard>;
+}
+
+function ShowroomsContent() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { data, isLoading, isError } = useGetAllShowroomsQuery();
 

@@ -10,7 +10,7 @@ import { gsap } from "gsap";
 
 const NAV_LINKS = [
   { label: "Collections", href: "/collections" },
-  { label: "Spaces",      href: "/services/interior-design" },
+  { label: "Products",    href: "/products" },
   { label: "Projects",    href: "/portfolio" },
   { label: "About",       href: "/about" },
   { label: "Contact",     href: "/contact" },

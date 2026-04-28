@@ -4,6 +4,7 @@ import type {
   PaginatedInquiries,
   InquiriesQuery,
   UpdateInquiryDto,
+  CreateInquiryDto,
 } from "../types";
 
 export interface NormalisedInquiries {
@@ -52,6 +53,11 @@ export const inquiriesApi = baseApi.injectEndpoints({
         { type: "Inquiry", id: "LIST" },
       ],
     }),
+
+    createInquiry: build.mutation<Inquiry, CreateInquiryDto>({
+      query: (body) => ({ url: "/inquiries", method: "POST", body }),
+      invalidatesTags: [{ type: "Inquiry", id: "LIST" }],
+    }),
   }),
 });
 
@@ -59,4 +65,5 @@ export const {
   useGetInquiriesQuery,
   useUpdateInquiryMutation,
   useDeleteInquiryMutation,
+  useCreateInquiryMutation,
 } = inquiriesApi;

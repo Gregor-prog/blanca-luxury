@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { TeamRow, TeamMemberProps } from '@/components/admin/TeamRow';
 import { InviteAdminPanel } from '@/components/admin/InviteAdminPanel';
+import { RoleGuard } from '@/components/admin/RoleGuard';
 import { useGetAdminsQuery } from '@/lib/store';
 import type { Admin, AdminRole } from '@/lib/types';
 
@@ -28,6 +29,10 @@ const mockActivity = [
 ];
 
 export default function TeamPage() {
+  return <RoleGuard allowed={['SUPER_ADMIN']}><TeamContent /></RoleGuard>;
+}
+
+function TeamContent() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { data: admins, isLoading, isError } = useGetAdminsQuery();
 

@@ -308,6 +308,15 @@ export interface UpdateInquiryDto {
   status?: InquiryStatus;
 }
 
+export interface CreateInquiryDto {
+  fullName: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+  serviceInterest?: string;
+  source?: InquirySource;
+}
+
 export interface InviteAdminDto {
   email: string;
   password: string;
