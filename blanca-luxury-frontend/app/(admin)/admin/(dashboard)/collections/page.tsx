@@ -1,64 +1,59 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { CollectionCard } from '@/components/admin/CollectionCard';
-import { AddCollectionPanel } from '@/components/admin/AddCollectionPanel';
-import { useGetAllCollectionsQuery } from '@/lib/store';
-import type { Collection } from '@/lib/types';
+import React, { useState } from "react";
+import { CollectionCard } from "@/components/admin/CollectionCard";
+import { useGetAllCategoriesQuery } from "@/lib/store/categoriesApi";
+import { AddCollectionPanel } from "@/components/admin/AddCollectionPanel";
+function toCardProps(c: any) {
+  return {
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    status: (c.isActive ? "Live" : "Draft") as "Live" | "Draft" | "Archived",
+    year: "",
+    showroom: "",
+    description: c.description ?? "",
+    productCount: c._count?.products ?? 0,
+    viewCount: 0,
+    isFeatured: false,
+    coverImage:
+      c.imageUrl ??
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=600&auto=format&fit=crop",
+  };
+}
 
 export default function CollectionsPage() {
-  const { data, isLoading, isError } = useGetAllCollectionsQuery();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [editingCollection, setEditingCollection] = useState<Collection | undefined>(undefined);
+  const [tabFilter, setTabFilter] = useState<"All" | "Live" | "Drafts">("All");
+  const { data, isLoading, isError } = useGetAllCategoriesQuery();
 
-  // Filter and Search States
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'LIVE' | 'DRAFT'>('ALL');
+  const allCategories = data?.items ?? [];
+  const collections = allCategories
+    .map(toCardProps)
+    .filter((c) =>
+      tabFilter === "All"
+        ? true
+        : tabFilter === "Live"
+          ? c.status === "Live"
+          : c.status === "Draft",
+    );
 
-  const collections = data?.items ?? [];
-
-  // Filter logic
-  const filteredCollections = collections.filter((c: Collection) => {
-    const matchesSearch = 
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = 
-      statusFilter === 'ALL' || 
-      (statusFilter === 'LIVE' && c.isActive) || 
-      (statusFilter === 'DRAFT' && !c.isActive);
-
-    return matchesSearch && matchesStatus;
-  });
-
-  // Metrics
-  const totalCollections = collections.length;
-  const liveCollections = collections.filter((c: Collection) => c.isActive).length;
-  const draftCollections = totalCollections - liveCollections;
-  const featuredCollections = collections.filter((c: Collection) => c.isFeatured).length;
-
-  const handleEdit = (collection: Collection) => {
-    setEditingCollection(collection);
-    setIsPanelOpen(true);
-  };
-
-  const handleOpenNewPanel = () => {
-    setEditingCollection(undefined);
-    setIsPanelOpen(true);
-  };
+  const liveCount = allCategories.filter((c) => c.isActive).length;
+  const draftCount = allCategories.filter((c) => !c.isActive).length;
 
   return (
-    <div className="relative pb-20">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-10">
+    <div className="relative">
+      <div className="flex justify-between items-end mb-10">
         <div>
-          <h2 className="text-[20px] font-bold tracking-tight text-admin-text-primary">Editorial Collections</h2>
-          <p className="text-[12px] text-admin-text-muted mt-1">
-            Curated stories — seasonal, thematic, and intentional groupings.
+          <h2 className="text-[20px] font-bold tracking-tight text-admin-text-primary">
+            Collections
+          </h2>
+          <p className="text-[12px] text-admin-text-muted mt-1 uppercase tracking-wider font-medium">
+            Curate editorial product groups for the website.
           </p>
         </div>
         <button
-          onClick={handleOpenNewPanel}
+          onClick={() => setIsPanelOpen(true)}
           className="bg-admin-gold text-admin-bg px-6 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-admin-gold/10"
         >
           New Collection
@@ -66,98 +61,101 @@ export default function CollectionsPage() {
         </button>
       </div>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
         {[
-          { label: 'Total Collections', value: totalCollections, icon: 'view_carousel' },
-          { label: 'Live Stories', value: liveCollections, icon: 'visibility', color: 'text-admin-success' },
-          { label: 'Featured', value: featuredCollections, icon: 'grade', color: 'text-admin-gold' },
-          { label: 'Drafts', value: draftCollections, icon: 'edit_note' },
-        ].map((stat, idx) => (
-          <div key={idx} className="bg-[#1A1916] border border-admin-border rounded-[8px] px-6 py-4 flex items-center justify-between shadow-sm">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#8B8680] block mb-1">{stat.label}</span>
-              <span className={`text-[22px] font-bold text-admin-text-primary ${stat.color || ''}`}>
-                {isLoading ? '…' : stat.value}
-              </span>
-            </div>
-            <span className={`material-symbols-outlined text-[24px] text-[#8B8680]/30 ${stat.color || ''}`}>{stat.icon}</span>
+          {
+            label: "Total Collections",
+            value: isLoading ? "…" : String(allCategories.length),
+          },
+          {
+            label: "Active (Live)",
+            value: isLoading ? "…" : String(liveCount),
+          },
+          { label: "Drafts", value: isLoading ? "…" : String(draftCount) },
+          { label: "Featured", value: "—" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="bg-admin-surface border border-admin-border p-4 rounded-[8px]"
+          >
+            <p className="text-[10px] text-admin-text-muted uppercase font-bold tracking-widest mb-1">
+              {stat.label}
+            </p>
+            <p className="text-[20px] font-bold text-admin-text-primary tracking-tight">
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-[#1A1916] border border-admin-border rounded-[8px] p-4 mb-8 flex flex-col md:flex-row gap-4 items-center shadow-sm">
-        <div className="relative flex-1 w-full">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#8B8680]">search</span>
-          <input 
-            type="text" 
-            placeholder="Search collections..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-[#131210] border border-admin-border/60 rounded-[6px] text-[13px] text-admin-text-primary placeholder-[#8B8680]/60 focus:border-admin-gold/50 focus:outline-none transition-all"
-          />
+      {/* Tab Controls */}
+      <div className="flex justify-between items-center mb-8 pb-4 border-b border-[#2E2C28]">
+        <div className="flex gap-6">
+          {(["All", "Live", "Drafts"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setTabFilter(tab)}
+              className={`font-bold text-[12px] uppercase tracking-wider pb-4 transition-colors ${
+                tabFilter === tab
+                  ? "text-admin-gold border-b-2 border-admin-gold -mb-[18px]"
+                  : "text-admin-text-muted hover:text-admin-text-primary"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
-          <select 
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="bg-[#131210] border border-admin-border/60 rounded-[6px] px-4 py-2 text-[12px] text-admin-text-primary font-medium focus:border-admin-gold/50 focus:outline-none appearance-none"
-          >
-            <option value="ALL">All Statuses</option>
-            <option value="LIVE">Live Only</option>
-            <option value="DRAFT">Drafts Only</option>
-          </select>
+        <div className="relative">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-admin-text-muted text-[18px]">
+            search
+          </span>
+          <input
+            className="admin-input !h-[36px] pl-10 pr-4 text-[13px] w-64"
+            placeholder="Search collections..."
+            type="text"
+          />
         </div>
       </div>
 
-      {/* Grid Area */}
       {isLoading ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center">
+        <div className="py-24 flex flex-col items-center justify-center">
           <div className="w-8 h-8 border-2 border-admin-gold/30 border-t-admin-gold rounded-full animate-spin mb-4" />
-          <p className="text-[13px] text-admin-text-secondary">Loading collections...</p>
+          <p className="text-[13px] text-admin-text-secondary">
+            Loading collections...
+          </p>
         </div>
       ) : isError ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center">
-          <span className="material-symbols-outlined text-[48px] text-admin-danger/30 mb-4">error</span>
-          <p className="text-[14px] text-admin-text-secondary font-medium">Failed to load collections.</p>
-        </div>
-      ) : filteredCollections.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCollections.map((collection: Collection) => (
-            <CollectionCard 
-              key={collection.id} 
-              collection={collection} 
-              onEdit={handleEdit}
-            />
-          ))}
+        <div className="py-24 flex flex-col items-center justify-center">
+          <span className="material-symbols-outlined text-[48px] text-admin-danger/30 mb-4">
+            error
+          </span>
+          <p className="text-[14px] text-admin-text-secondary">
+            Failed to load collections.
+          </p>
         </div>
       ) : (
-        <div className="py-24 bg-[#1A1916] border border-admin-border border-dashed rounded-[8px] flex flex-col items-center justify-center text-center w-full col-span-full">
-          <span className="material-symbols-outlined text-[64px] text-admin-gold/20 mb-4">view_carousel</span>
-          <p className="text-[14px] text-[#8B8680] font-medium">No collections found.</p>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {collections.map((collection) => (
+            <CollectionCard key={collection.id} collection={collection} />
+          ))}
+          {collections.length === 0 && (
+            <div className="col-span-2 py-24 flex flex-col items-center justify-center text-center">
+              <span className="material-symbols-outlined text-[64px] text-admin-gold/20 mb-4">
+                collections
+              </span>
+              <p className="text-[14px] text-admin-text-secondary font-medium">
+                No collections found.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Create/Edit Slide-over Panel */}
-      <AddCollectionPanel 
-        isOpen={isPanelOpen} 
-        onClose={() => {
-          setIsPanelOpen(false);
-          setEditingCollection(undefined);
-        }} 
-        initialData={editingCollection ? {
-          id: editingCollection.id,
-          name: editingCollection.name,
-          slug: editingCollection.slug,
-          description: editingCollection.description ?? undefined,
-          badgeText: editingCollection.badgeText ?? undefined,
-          year: editingCollection.year ?? undefined,
-          showroomId: editingCollection.showroomId ?? undefined,
-          isFeatured: editingCollection.isFeatured,
-          isActive: editingCollection.isActive
-        } : undefined}
+      <AddCollectionPanel
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
       />
     </div>
   );
