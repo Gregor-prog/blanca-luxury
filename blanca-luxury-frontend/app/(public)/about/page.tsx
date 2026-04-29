@@ -318,6 +318,62 @@ export default function AboutPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
+          SECTION 4.5 — OUR SHOWROOMS
+      ══════════════════════════════════════════════════════════ */}
+      <section className="bg-[#fbf2e7] py-32 px-8 md:px-12 text-center">
+        <ScrollReveal y={24} delay={0}>
+          <p className="font-sans text-[9px] uppercase tracking-[0.35em] text-[#745a27] mb-4">
+            Visit Us
+          </p>
+          <h2 className="font-serif italic text-4xl text-[#1e1b15] mb-16">
+            Our Showrooms
+          </h2>
+        </ScrollReveal>
+
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Port Harcourt */}
+          <div className="bg-[#fff8f1] border border-[#E8E0D5] p-10 flex flex-col gap-6 text-left rounded-lg shadow-sm justify-between">
+            <div>
+              <span className="font-sans text-[10px] tracking-[0.35em] text-[#C9A96E] uppercase block mb-6">
+                Port Harcourt Showrooms
+              </span>
+              <div className="space-y-5">
+                <div className="flex flex-col gap-1">
+                  <p className="font-serif text-lg text-[#2C2420]">1. Garden City Mall</p>
+                  <p className="font-sans text-[13px] text-[#8B7D72]">Rumuomasi, Port Harcourt, Rivers State.</p>
+                </div>
+                <div className="h-px bg-[#E8E0D5] w-full" />
+                <div className="flex flex-col gap-1">
+                  <p className="font-serif text-lg text-[#2C2420]">2. J&apos;s Signature Hotel</p>
+                  <p className="font-sans text-[13px] text-[#8B7D72]">GRA, Port Harcourt, Rivers State.</p>
+                </div>
+              </div>
+            </div>
+            <div className="pt-6 flex flex-col gap-1 border-t border-[#E8E0D5] mt-4">
+              <p className="font-sans text-[13px] text-[#8B7D72]">+234 813 991 0974</p>
+              <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
+            </div>
+          </div>
+
+          {/* Lagos */}
+          <div className="bg-[#fff8f1] border border-[#E8E0D5] p-10 flex flex-col gap-6 text-left rounded-lg shadow-sm justify-between">
+            <div>
+              <span className="font-sans text-[10px] tracking-[0.35em] text-[#C9A96E] uppercase block mb-6">
+                Lagos Showroom
+              </span>
+              <p className="font-serif text-xl text-[#2C2420] leading-snug">
+                11A Bishop Abayode Cole VI, Lagos.
+              </p>
+            </div>
+            <div className="pt-6 flex flex-col gap-1 border-t border-[#E8E0D5] mt-4">
+              <p className="font-sans text-[13px] text-[#8B7D72]">+234 813 991 0974</p>
+              <p className="font-sans text-[13px] text-[#8B7D72]">blancaluxurydecor@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
           SECTION 5 — TIMELINE
       ══════════════════════════════════════════════════════════ */}
       <section className="bg-[#1A1410] py-32 overflow-hidden">
