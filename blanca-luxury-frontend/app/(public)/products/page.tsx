@@ -54,7 +54,7 @@ export default function ProductsPage() {
 
       {/* Category filter */}
       <section className="bg-[#fff8f1] py-5 px-4 md:px-16 sticky top-[72px] z-40 border-b border-[#E8E0D5]/50">
-        <div className="flex flex-wrap items-center gap-2 max-w-7xl mx-auto">
+        <div className="flex overflow-x-auto items-center gap-2 max-w-7xl mx-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <button
             onClick={() => setCategoryId(undefined)}
             className={`px-5 py-2 rounded-full font-sans text-[10px] tracking-wider uppercase transition-all whitespace-nowrap ${
