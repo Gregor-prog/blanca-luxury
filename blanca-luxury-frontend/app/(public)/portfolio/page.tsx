@@ -16,20 +16,16 @@ const SECTORS: FilterSector[] = [
 ];
 
 const SECTOR_LABELS: Record<FilterSector, string> = {
-  ALL:         "All",
+  ALL: "All",
   RESIDENTIAL: "Residential",
-  COMMERCIAL:  "Commercial",
-  GOVERNMENT:  "Government",
+  COMMERCIAL: "Commercial",
+  GOVERNMENT: "Government",
   HOSPITALITY: "Hospitality",
-  MEDICAL:     "Medical",
+  MEDICAL: "Medical",
 };
 
 function coverUrl(project: ProjectListItem): string {
-  return (
-    project.coverImageUrl ??
-    project.media[0]?.url ??
-    "/placeholder.jpg"
-  );
+  return project.coverImageUrl ?? project.media[0]?.url ?? "/placeholder.jpg";
 }
 
 // ─── skeleton ─────────────────────────────────────────────────────────────────
@@ -83,8 +79,8 @@ export default function PortfolioPage() {
       </section>
 
       {/* Filter */}
-      <section className="bg-[#fff8f1] py-5 px-4 md:px-16 sticky top-24 z-40 border-b border-[#E8E0D5]/50">
-        <div className="flex flex-wrap items-center gap-2 md:gap-4 max-w-7xl mx-auto">
+      <section className="bg-[#fff8f1] py-5 px-4 md:px-16 top-24 z-40 border-b border-[#E8E0D5]/50">
+        <div className="flex overflow-x-auto items-center gap-2 md:gap-4 max-w-7xl mx-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {SECTORS.map((sector) => (
             <button
               key={sector}
@@ -105,7 +101,7 @@ export default function PortfolioPage() {
       {isSpinning ? (
         <PortfolioSkeleton />
       ) : projects.length === 0 ? (
-        <section className="px-8 md:px-16 py-32 flex flex-col items-center text-center">
+        <section className="px-6 md:px-16 py-32 flex flex-col items-center text-center">
           <h2 className="font-serif text-[24px] italic text-[#1e1b15] mb-4">
             No projects found in this category.
           </h2>
@@ -117,28 +113,32 @@ export default function PortfolioPage() {
           </button>
         </section>
       ) : (
-        <div className="py-16">
+        <div className="py-12 md:py-16">
           {/* Featured project */}
-          <section className="px-8 md:px-16 mb-24 max-w-400 mx-auto">
-            <div className="relative w-full h-130 rounded-lg overflow-hidden group cursor-pointer">
+          <section className="px-4 md:px-16 mb-16 md:mb-24 max-w-[1600px] mx-auto">
+            <div className="relative w-full h-[450px] md:h-[650px] lg:h-[750px] rounded-lg overflow-hidden group cursor-pointer">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
                 style={{ backgroundImage: `url('${coverUrl(projects[0])}')` }}
               />
-              <div className="absolute inset-0 bg-linear-to-t from-[#1A1410]/90 via-[#1A1410]/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-12 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="space-y-4">
-                  <p className="text-[#C9A96E] font-sans font-bold text-[11px] tracking-widest uppercase">
-                    {[projects[0].location, projects[0].year, SECTOR_LABELS[projects[0].sector] ?? projects[0].sector]
+              <div className="absolute inset-0 bg-linear-to-t from-[#1A1410]/90 via-[#1A1410]/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
+                <div className="space-y-3 md:space-y-4">
+                  <p className="text-[#C9A96E] font-sans font-bold text-[10px] md:text-[11px] tracking-widest uppercase">
+                    {[
+                      projects[0].location,
+                      projects[0].year,
+                      SECTOR_LABELS[projects[0].sector] ?? projects[0].sector,
+                    ]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
-                  <h2 className="text-white text-4xl md:text-5xl font-serif italic">
+                  <h2 className="text-white text-3xl md:text-5xl font-serif italic">
                     {projects[0].title}
                   </h2>
                 </div>
-                <div>
-                  <button className="px-10 py-4 border border-white text-white font-sans font-bold text-[10px] tracking-widest uppercase hover:bg-white hover:text-[#1A1410] transition-all duration-500">
+                <div className="w-full md:w-auto mt-4 md:mt-0">
+                  <button className="w-full md:w-auto px-8 md:px-10 py-3 md:py-4 border border-white text-white font-sans font-bold text-[10px] tracking-widest uppercase hover:bg-white hover:text-[#1A1410] transition-all duration-500">
                     View Project →
                   </button>
                 </div>
@@ -148,11 +148,11 @@ export default function PortfolioPage() {
 
           {/* Grid */}
           {projects.length > 1 && (
-            <section className="px-8 md:px-16 mb-24 max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+            <section className="px-4 md:px-16 mb-16 md:mb-24 max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 {projects.slice(1).map((project) => (
                   <div key={project.id} className="group cursor-pointer">
-                    <div className="relative h-120 rounded-lg overflow-hidden mb-6">
+                    <div className="relative h-[350px] md:h-[480px] lg:h-[550px] rounded-lg overflow-hidden mb-5 md:mb-6">
                       <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                         style={{
@@ -166,17 +166,17 @@ export default function PortfolioPage() {
                       </div>
                     </div>
                     <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-[#2C2420] text-2xl font-serif italic mb-1">
+                      <div className="pr-4">
+                        <h3 className="text-[#2C2420] text-xl md:text-2xl font-serif italic mb-1">
                           {project.title}
                         </h3>
-                        <p className="text-[#8B7D72] text-[11px] font-sans tracking-widest uppercase font-bold">
+                        <p className="text-[#8B7D72] text-[10px] md:text-[11px] font-sans tracking-widest uppercase font-bold">
                           {[project.location, project.year]
                             .filter(Boolean)
                             .join(" · ")}
                         </p>
                       </div>
-                      <div className="px-3 py-1 border border-[#C9A96E]/40 text-[#C9A96E] font-sans text-[9px] tracking-widest uppercase font-bold rounded-full">
+                      <div className="px-3 py-1 border border-[#C9A96E]/40 text-[#C9A96E] font-sans text-[8px] md:text-[9px] tracking-widest uppercase font-bold rounded-full shrink-0">
                         {SECTOR_LABELS[project.sector] ?? project.sector}
                       </div>
                     </div>
