@@ -47,13 +47,14 @@ export default function ProductsPage() {
             All Products
           </h1>
           <p className="text-[#8B7D72] text-sm font-sans max-w-lg leading-relaxed">
-            Bespoke Italian &amp; Turkish furniture for Nigeria&apos;s most distinguished interiors.
+            Bespoke Italian &amp; Turkish furniture for Nigeria&apos;s most
+            distinguished interiors.
           </p>
         </div>
       </section>
 
       {/* Category filter */}
-      <section className="bg-[#fff8f1] py-5 px-4 md:px-16 sticky top-[72px] z-40 border-b border-[#E8E0D5]/50">
+      <section className="bg-[#fff8f1] py-5 px-4 md:px-16 top-[72px] z-40 border-b border-[#E8E0D5]/50">
         <div className="flex overflow-x-auto items-center gap-2 max-w-7xl mx-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <button
             onClick={() => setCategoryId(undefined)}
@@ -87,7 +88,9 @@ export default function ProductsPage() {
           <Skeleton />
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <h2 className="font-serif italic text-2xl text-[#1e1b15] mb-4">No products found</h2>
+            <h2 className="font-serif italic text-2xl text-[#1e1b15] mb-4">
+              No products found
+            </h2>
             <button
               onClick={() => setCategoryId(undefined)}
               className="font-sans text-[12px] font-bold text-[#C9A96E] uppercase tracking-widest hover:opacity-70 border-b border-[#C9A96E] pb-1"
@@ -98,7 +101,8 @@ export default function ProductsPage() {
         ) : (
           <>
             <p className="font-sans text-[11px] text-[#8B7D72] tracking-wider mb-8">
-              Showing {products.length} {products.length === 1 ? "product" : "products"}
+              Showing {products.length}{" "}
+              {products.length === 1 ? "product" : "products"}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
               {products.map((product) => (
@@ -125,7 +129,9 @@ function ProductCard({ product }: { product: ProductListItem }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="material-symbols-outlined text-[#C9A96E] text-5xl">chair</span>
+            <span className="material-symbols-outlined text-[#C9A96E] text-5xl">
+              chair
+            </span>
           </div>
         )}
         <div className="absolute inset-0 bg-[#1A1410]/0 group-hover:bg-[#1A1410]/20 transition-all duration-500" />
@@ -145,7 +151,9 @@ function ProductCard({ product }: { product: ProductListItem }) {
           {product.name}
         </h3>
         <p className="font-sans text-[11px] text-[#8B7D72]">
-          {product.priceOnRequest ? "Price on Request" : product.price ?? "Price on Request"}
+          {product.priceOnRequest
+            ? "Price on Request"
+            : (product.price ?? "Price on Request")}
         </p>
       </div>
     </Link>
