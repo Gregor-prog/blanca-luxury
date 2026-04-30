@@ -73,8 +73,13 @@ export const projectsApi = baseApi.injectEndpoints({
       keepUnusedDataFor: 300,
     }),
 
-    createProject: build.mutation<ProjectDetail, CreateProjectDto>({
-      query: (body) => ({ url: "/projects", method: "POST", body }),
+    createProject: build.mutation<ProjectDetail, FormData>({
+      query: (formData) => ({
+        url: "/projects",
+        method: "POST",
+        body: formData,
+        formData: true,
+      }),
       invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
 

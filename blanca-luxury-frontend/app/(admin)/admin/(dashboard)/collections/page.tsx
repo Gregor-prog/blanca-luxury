@@ -2,37 +2,21 @@
 
 import React, { useState } from "react";
 import { CollectionCard } from "@/components/admin/CollectionCard";
-import { useGetAllCategoriesQuery } from "@/lib/store/categoriesApi";
+import { useGetAllCollectionsQuery } from "@/lib/store/collectionsApi";
 import { AddCollectionPanel } from "@/components/admin/AddCollectionPanel";
 import type { Collection } from "@/lib/types";
 
-function toCardProps(c: any): Collection {
-  return {
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    description: c.description ?? "",
-    badgeText: c.badgeText ?? null,
-    year: c.year ?? null,
-    showroomId: c.showroomId ?? null,
-    coverImageUrl: c.imageUrl ?? c.coverImageUrl ?? "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=600&auto=format&fit=crop",
-    coverCloudinaryId: c.coverCloudinaryId ?? null,
-    isFeatured: c.isFeatured ?? false,
-    isActive: c.isActive ?? false,
-    displayOrder: c.displayOrder ?? 0,
-    showroom: c.showroom ?? null,
-    _count: c._count ?? { products: 0 }
-  };
+function toCardProps(c: Collection): Collection {
+  return c; // Data is already in the correct format from useGetAllCollectionsQuery
 }
 
 export default function CollectionsPage() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [tabFilter, setTabFilter] = useState<"All" | "Live" | "Drafts">("All");
-  const { data, isLoading, isError } = useGetAllCategoriesQuery();
+  const { data, isLoading, isError } = useGetAllCollectionsQuery();
 
-  const allCategories = data?.items ?? [];
-  const collections = allCategories
-    .map(toCardProps)
+  const allCollections = data?.items ?? [];
+  const collections = allCollections
     .filter((c) =>
       tabFilter === "All"
         ? true
@@ -41,8 +25,8 @@ export default function CollectionsPage() {
           : c.isActive === false,
     );
 
-  const liveCount = allCategories.filter((c) => c.isActive).length;
-  const draftCount = allCategories.filter((c) => !c.isActive).length;
+  const liveCount = allCollections.filter((c) => c.isActive).length;
+  const draftCount = allCollections.filter((c) => !c.isActive).length;
 
   return (
     <div className="relative">
@@ -69,7 +53,7 @@ export default function CollectionsPage() {
         {[
           {
             label: "Total Collections",
-            value: isLoading ? "…" : String(allCategories.length),
+            value: isLoading ? "…" : String(allCollections.length),
           },
           {
             label: "Active (Live)",

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useGetAdminProjectsQuery, useDeleteProjectMutation } from '@/lib/store';
 import { RoleGuard } from '@/components/admin/RoleGuard';
+import { AddProjectPanel } from '@/components/admin/AddProjectPanel';
 import type { ProjectListItem, ProjectSector } from '@/lib/types';
 
 const SECTORS: Array<{ label: string; value: ProjectSector | 'ALL' }> = [
@@ -26,9 +27,11 @@ const SECTOR_LABELS: Record<ProjectSector, string> = {
 function ProjectCard({
   project,
   onDelete,
+  onEdit,
 }: {
   project: ProjectListItem;
   onDelete: (id: string) => void;
+  onEdit: (project: ProjectListItem) => void;
 }) {
   const primaryImage = project.media.find((m) => m.mediaType === 'IMAGE') ?? project.media[0];
   const imageUrl = project.coverImageUrl ?? primaryImage?.url ?? null;
@@ -83,7 +86,10 @@ function ProjectCard({
 
         <div className="flex items-center justify-between pt-4 border-t border-admin-border/20">
           <div className="flex items-center divide-x divide-admin-border/30">
-            <button className="pr-3 text-[11px] font-bold text-admin-gold hover:opacity-80 transition-opacity uppercase tracking-tight">
+            <button 
+              onClick={() => onEdit(project)}
+              className="pr-3 text-[11px] font-bold text-admin-gold hover:opacity-80 transition-opacity uppercase tracking-tight"
+            >
               Edit
             </button>
             <button
@@ -109,6 +115,8 @@ export default function ProjectsPage() {
 function ProjectsContent() {
   const [sectorFilter, setSectorFilter] = useState<ProjectSector | 'ALL'>('ALL');
   const [deleteProject] = useDeleteProjectMutation();
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<ProjectListItem | null>(null);
 
   const { data, isLoading, isError } = useGetAdminProjectsQuery(
     sectorFilter !== 'ALL' ? { sector: sectorFilter } : {}
@@ -122,6 +130,16 @@ function ProjectsContent() {
     await deleteProject(id);
   };
 
+  const handleEdit = (project: ProjectListItem) => {
+    setEditingProject(project);
+    setIsPanelOpen(true);
+  };
+
+  const handleAdd = () => {
+    setEditingProject(null);
+    setIsPanelOpen(true);
+  };
+
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -132,7 +150,10 @@ function ProjectsContent() {
             Portfolio projects across all sectors · {total} total
           </p>
         </div>
-        <button className="bg-admin-gold text-admin-bg px-6 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-[0_0_15px_rgba(201,169,110,0.15)]">
+        <button 
+          onClick={handleAdd}
+          className="bg-admin-gold text-admin-bg px-6 py-2.5 rounded-[8px] text-[13px] font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-[0_0_15px_rgba(201,169,110,0.15)]"
+        >
           Add Project
           <span className="material-symbols-outlined text-[18px]">add</span>
         </button>
@@ -177,10 +198,29 @@ function ProjectsContent() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} onDelete={handleDelete} />
+            <ProjectCard key={project.id} project={project} onDelete={handleDelete} onEdit={handleEdit} />
           ))}
         </div>
       )}
+
+      <AddProjectPanel 
+        isOpen={isPanelOpen} 
+        onClose={() => {
+          setIsPanelOpen(false);
+          setEditingProject(null);
+        }} 
+        initialData={editingProject ? {
+          id: editingProject.id,
+          title: editingProject.title,
+          sector: editingProject.sector,
+          location: editingProject.location ?? '',
+          year: editingProject.year ?? undefined,
+          description: '', // ListItem doesn't have description
+          clientName: '', // ListItem doesn't have clientName
+          isFeatured: editingProject.isFeatured,
+          isActive: editingProject.isActive
+        } : undefined}
+      />
 
       <div className="h-20" />
     </div>
