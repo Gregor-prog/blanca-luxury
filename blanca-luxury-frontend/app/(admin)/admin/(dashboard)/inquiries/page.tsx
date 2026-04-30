@@ -83,14 +83,14 @@ export default function InquiriesPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <header className="flex justify-between items-end mb-10">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-[28px] font-bold tracking-tight text-[#F0EDE8]">Inquiries</h2>
-          <div className="flex items-center gap-4">
-            <p className="text-[12px] text-admin-text-muted uppercase tracking-wider font-semibold">
+          <h2 className="text-[24px] md:text-[28px] font-bold tracking-tight text-[#F0EDE8]">Inquiries</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <p className="text-[11px] md:text-[12px] text-admin-text-muted uppercase tracking-wider font-semibold">
               All leads from web forms and WhatsApp triggers.
             </p>
-            <div className="flex items-center gap-3 text-[10px] font-bold bg-[#1D1B19] px-3 py-1.5 rounded-[4px] border border-admin-border/30">
+            <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold bg-[#1D1B19] px-3 py-1.5 rounded-[4px] border border-admin-border/30 w-fit">
               <span className="text-admin-gold">{newCount} NEW</span>
               <span className="text-admin-text-muted">·</span>
               <span className="text-orange-400">{inProgressCount} IN PROGRESS</span>
@@ -102,14 +102,14 @@ export default function InquiriesPage() {
       </header>
 
       {/* Filter Bar */}
-      <div className="bg-[#1A1916] border border-admin-border/50 rounded-[8px] p-4 flex flex-wrap items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="flex bg-admin-bg p-1 rounded-[6px] border border-admin-border/30">
+      <div className="bg-[#1A1916] border border-admin-border/50 rounded-[8px] p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6">
+        <div className="overflow-x-auto custom-scrollbar pb-2 sm:pb-0">
+          <div className="flex bg-admin-bg p-1 rounded-[6px] border border-admin-border/30 w-fit">
             {(['All', 'New', 'In Progress', 'Quoted', 'Converted', 'Closed'] as StatusFilter[]).map((s) => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-[4px] transition-all ${
+                className={`px-3 md:px-4 py-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-widest rounded-[4px] transition-all whitespace-nowrap ${
                   statusFilter === s
                     ? 'bg-admin-surface-elevated text-admin-gold'
                     : 'text-admin-text-muted hover:text-admin-text-primary'
@@ -120,21 +120,19 @@ export default function InquiriesPage() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="h-[38px] px-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-admin-text-primary border border-admin-border hover:border-admin-gold/50 transition-all rounded-[6px]">
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            Export CSV
-          </button>
-        </div>
+        <button className="h-[38px] px-5 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-widest text-admin-text-primary border border-admin-border hover:border-admin-gold/50 transition-all rounded-[6px]">
+          <span className="material-symbols-outlined text-[18px]">download</span>
+          Export CSV
+        </button>
       </div>
 
       {/* Table */}
-      <div className="bg-[#1A1916] rounded-[8px] border border-admin-border/50 overflow-hidden shadow-2xl">
-        <table className="w-full text-left border-collapse">
+      <div className="bg-[#1A1916] rounded-[8px] border border-admin-border/50 overflow-hidden shadow-2xl overflow-x-auto custom-scrollbar">
+        <table className="w-full text-left border-collapse min-w-[1100px]">
           <thead>
             <tr className="border-b border-admin-border/50 bg-admin-bg/30">
-              <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em] w-1/5">Name</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em] w-1/5">Contact</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em]">Name</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em]">Contact</th>
               <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em]">Interest</th>
               <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em]">Showroom</th>
               <th className="px-6 py-4 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.2em]">Source</th>

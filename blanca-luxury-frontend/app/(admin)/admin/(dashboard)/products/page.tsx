@@ -98,54 +98,58 @@ export default function ProductsPage() {
       <ProductFilterBar />
 
       <div className="bg-admin-surface border border-admin-border rounded-[8px] overflow-hidden shadow-sm">
-        <div className="h-[44px] bg-admin-surface-elevated/20 flex items-center px-4 border-b border-admin-border">
-          <div className="flex items-center w-12 text-left">
-            <input
-              type="checkbox"
-              checked={isAllSelected}
-              onChange={toggleAll}
-              className="w-4 h-4 rounded-[2px] border-admin-border bg-admin-surface text-admin-gold focus:ring-1 focus:ring-admin-gold cursor-pointer"
-            />
-          </div>
-          <div className="w-16 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Image</div>
-          <div className="flex-1 min-w-[200px] text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Product Name</div>
-          <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Category</div>
-          <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Showroom</div>
-          <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Origin</div>
-          <div className="w-24 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Status</div>
-          <div className="w-16 text-center text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Featured</div>
-          <div className="w-12 text-right text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Actions</div>
-        </div>
+        <div className="overflow-x-auto custom-scrollbar">
+          <div className="min-w-[1000px]">
+            <div className="h-[44px] bg-admin-surface-elevated/20 flex items-center px-4 border-b border-admin-border">
+              <div className="flex items-center w-12 text-left">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={toggleAll}
+                  className="w-4 h-4 rounded-[2px] border-admin-border bg-admin-surface text-admin-gold focus:ring-1 focus:ring-admin-gold cursor-pointer"
+                />
+              </div>
+              <div className="w-16 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Image</div>
+              <div className="flex-1 min-w-[200px] text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Product Name</div>
+              <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Category</div>
+              <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Showroom</div>
+              <div className="flex-1 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Origin</div>
+              <div className="w-24 text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Status</div>
+              <div className="w-16 text-center text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Featured</div>
+              <div className="w-12 text-right text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em]">Actions</div>
+            </div>
 
-        <div className="divide-y divide-admin-border/10">
-          {isLoading ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center">
-              <div className="w-8 h-8 border-2 border-admin-gold/30 border-t-admin-gold rounded-full animate-spin mb-4" />
-              <p className="text-[13px] text-admin-text-secondary">Loading products...</p>
+            <div className="divide-y divide-admin-border/10">
+              {isLoading ? (
+                <div className="py-24 flex flex-col items-center justify-center text-center">
+                  <div className="w-8 h-8 border-2 border-admin-gold/30 border-t-admin-gold rounded-full animate-spin mb-4" />
+                  <p className="text-[13px] text-admin-text-secondary">Loading products...</p>
+                </div>
+              ) : isError ? (
+                <div className="py-24 flex flex-col items-center justify-center text-center">
+                  <span className="material-symbols-outlined text-[48px] text-admin-danger/30 mb-4">error</span>
+                  <p className="text-[14px] text-admin-text-secondary font-medium">Failed to load products.</p>
+                </div>
+              ) : products.length > 0 ? (
+                products.map((product) => (
+                  <ProductRow
+                    key={product.id}
+                    product={{
+                      ...toRowProps(product),
+                      isSelected: selectedIds.includes(product.id),
+                      onToggleSelection: toggleSelection,
+                      onToggleFeatured: toggleFeatured,
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="py-24 flex flex-col items-center justify-center text-center">
+                  <span className="material-symbols-outlined text-[64px] text-admin-gold/20 mb-4">inventory_2</span>
+                  <p className="text-[14px] text-admin-text-secondary font-medium">No products found.</p>
+                </div>
+              )}
             </div>
-          ) : isError ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center">
-              <span className="material-symbols-outlined text-[48px] text-admin-danger/30 mb-4">error</span>
-              <p className="text-[14px] text-admin-text-secondary font-medium">Failed to load products.</p>
-            </div>
-          ) : products.length > 0 ? (
-            products.map((product) => (
-              <ProductRow
-                key={product.id}
-                product={{
-                  ...toRowProps(product),
-                  isSelected: selectedIds.includes(product.id),
-                  onToggleSelection: toggleSelection,
-                  onToggleFeatured: toggleFeatured,
-                }}
-              />
-            ))
-          ) : (
-            <div className="py-24 flex flex-col items-center justify-center text-center">
-              <span className="material-symbols-outlined text-[64px] text-admin-gold/20 mb-4">inventory_2</span>
-              <p className="text-[14px] text-admin-text-secondary font-medium">No products found.</p>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 

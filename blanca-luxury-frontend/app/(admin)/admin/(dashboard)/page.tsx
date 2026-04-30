@@ -114,7 +114,7 @@ export default function DashboardPage() {
               View All →
             </Link>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto custom-scrollbar">
             {loadingInquiries ? (
               <div className="py-12 flex items-center justify-center">
                 <div className="w-6 h-6 border-2 border-admin-gold/30 border-t-admin-gold rounded-full animate-spin" />
@@ -122,7 +122,7 @@ export default function DashboardPage() {
             ) : recentInquiries.length === 0 ? (
               <div className="py-12 text-center text-[13px] text-admin-text-muted">No inquiries yet.</div>
             ) : (
-              <table className="w-full text-left">
+              <table className="w-full text-left min-w-[800px]">
                 <thead>
                   <tr className="text-[10px] font-bold text-admin-text-muted uppercase tracking-[0.15em] border-b border-admin-border/20">
                     <th className="px-6 py-4">Name</th>

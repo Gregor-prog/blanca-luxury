@@ -51,13 +51,17 @@ function getRoleLabel(admin: Admin): string {
   return labels[admin.role] ?? admin.role;
 }
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
   const router   = useRouter();
   const [logout, { isLoading: loggingOut }] = useLogoutMutation();
   const [admin, setAdmin] = useState<Admin | null>(null);
 
   useEffect(() => { setAdmin(getStoredAdmin()); }, []);
+  useEffect(() => {
+    // Close sidebar on navigation on mobile
+    if (onClose) onClose();
+  }, [pathname]);
 
   // Default to true while admin data is loading (null) — only restrict once role is confirmed
   const isSuperAdmin = !admin || admin.role === 'SUPER_ADMIN';
@@ -69,14 +73,22 @@ export function Sidebar() {
   };
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-[240px] bg-[#0F0E0C] border-r border-[#2E2C28] flex flex-col py-8 z-50 overflow-hidden">
-      {/* Logo */}
-      <div className="px-8 mb-8">
+    <nav className={`fixed left-0 top-0 h-screen w-[240px] bg-[#0F0E0C] border-r border-[#2E2C28] flex flex-col py-8 z-50 overflow-hidden transition-transform duration-300 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* Logo + Close button */}
+      <div className="px-8 mb-8 flex items-center justify-between">
         <div className="flex flex-col">
           <Image src="/logo.png" alt="BLANCA LUXURY" width={100} height={30}
             className="h-6 w-auto object-contain brightness-125 mb-1" />
           <span className="text-[10px] text-admin-text-muted font-medium uppercase tracking-[0.1em]">Admin Portal</span>
         </div>
+        
+        {/* Mobile Close Button */}
+        <button 
+          onClick={onClose}
+          className="md:hidden text-admin-text-secondary hover:text-admin-gold transition-colors"
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </div>
 
       <div className="h-px bg-[#2E2C28] mx-8 mb-8" />
