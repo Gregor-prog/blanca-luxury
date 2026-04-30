@@ -163,7 +163,7 @@ export function Footer() {
           <div className="pt-8 border-t border-[#2E2820] text-center">
             <p className="text-[11px] text-[#8B7D72] tracking-widest font-light">
               © 2025 Blanca Luxury Limited · Port Harcourt · Lagos · Crafted
-              with care.
+              with care by <a href="https://wa.me/2348148876125" target="_blank" rel="noreferrer" className="hover:text-[#C9A96E] transition-colors duration-300">Parakletus Technologies</a>
             </p>
           </div>
         </div>
