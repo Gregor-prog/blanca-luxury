@@ -113,12 +113,33 @@ export function Footer() {
               <div className="flex flex-col space-y-5">
                 <div>
                   <p className="text-[11px] text-[#C9A96E] uppercase tracking-widest mb-1">Port Harcourt</p>
-                  <p className="text-[12px] text-[#8B7D72]">Garden City Mall, Rumuomasi</p>
-                  <p className="text-[12px] text-[#8B7D72]">J&apos;s Signature Hotel, GRA</p>
+                  <a 
+                    href="https://maps.app.goo.gl/PYdbwmzd5M3tso1b9" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="block text-[12px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300 mb-1"
+                  >
+                    Garden City Mall, Rumuomasi
+                  </a>
+                  <a 
+                    href="https://maps.app.goo.gl/HTktm8CqeY968fDs8" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="block text-[12px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
+                  >
+                    J&apos;s Signature Hotel, GRA
+                  </a>
                 </div>
                 <div>
                   <p className="text-[11px] text-[#C9A96E] uppercase tracking-widest mb-1">Lagos</p>
-                  <p className="text-[12px] text-[#8B7D72]">11A Bishop Abayode Cole VI</p>
+                  <a 
+                    href="https://maps.app.goo.gl/CvM6djcerwz46hXt5" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="block text-[12px] text-[#8B7D72] hover:text-[#C9A96E] transition-colors duration-300"
+                  >
+                    11A Bishop Abayode Cole VI
+                  </a>
                 </div>
                 <div className="pt-2 flex flex-col gap-2">
                   <a
