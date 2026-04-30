@@ -178,7 +178,7 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════════
           SECTION 1 — OPENING STATEMENT
       ══════════════════════════════════════════════════════════ */}
-      <section className="min-h-[80svh] w-full flex flex-col items-center justify-center bg-[#fff8f1] px-6 py-24 text-center relative">
+      <section className="min-h-[70svh] md:min-h-[80svh] w-full flex flex-col items-center justify-center bg-[#fff8f1] px-6 py-16 md:py-24 text-center relative">
         <ScrollReveal delay={200} y={24}>
           <div className="mb-8 font-sans font-medium text-[10px] uppercase tracking-[0.35em] text-[#745a27]">
             OUR STORY

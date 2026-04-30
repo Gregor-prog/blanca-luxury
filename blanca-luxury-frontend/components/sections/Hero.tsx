@@ -86,13 +86,10 @@ export function Hero() {
 
   return (
     <section
+      className="flex items-center md:items-end relative overflow-hidden"
       style={{
-        position:   "relative",
         height:     "calc(100svh - 72px)",
         minHeight:  520,
-        overflow:   "hidden",
-        display:    "flex",
-        alignItems: "flex-end",
       }}
     >
       {/* ── Background image ── */}
@@ -125,7 +122,7 @@ export function Hero() {
           zIndex:       10,
           paddingLeft:  "var(--space-gutter)",
           paddingRight: "var(--space-gutter)",
-          paddingBottom: "clamp(48px, 6vw, 80px)",
+          paddingBottom: "clamp(24px, 6vw, 80px)",
           maxWidth:     720,
           width:        "100%",
         }}

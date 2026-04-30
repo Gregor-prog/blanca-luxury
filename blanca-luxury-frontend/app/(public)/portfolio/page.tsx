@@ -63,7 +63,7 @@ export default function PortfolioPage() {
   return (
     <main className="min-h-screen bg-[#fff8f1]">
       {/* Hero */}
-      <section className="bg-[#1A1410] flex items-center px-8 md:px-16 overflow-hidden py-28 md:py-36">
+      <section className="bg-[#1A1410] flex items-center px-8 md:px-16 overflow-hidden py-16 md:py-36">
         <div className="max-w-4xl space-y-6">
           <p className="text-[#C9A96E] font-bold font-sans text-[10px] tracking-[0.3em] uppercase">
             OUR WORK
