@@ -77,6 +77,7 @@ jobs:
                SCM_DO_BUILD_DURING_DEPLOYMENT=true \
               ENABLE_ORYX_BUILD=true \
               PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x \
+              WEBSITE_RUN_FROM_PACKAGE=1 \
               WEBSITE_NODE_DEFAULT_VERSION=22.x
 
       - name: Clear potential deployment lock
