@@ -45,6 +45,7 @@ jobs:
             ./api/prisma
             ./api/pnpm-lock.yaml
             ./api/.npmrc
+          include-hidden-files: true
 
   deploy:
     runs-on: ubuntu-latest
@@ -77,6 +78,11 @@ jobs:
               ENABLE_ORYX_BUILD=true \
               PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x \
               WEBSITE_NODE_DEFAULT_VERSION=22.x
+
+      - name: Clear potential deployment lock
+        run: |
+          RESOURCE_GROUP=$(az webapp show --name blanca-luxury-api --query resourceGroup -o tsv)
+          az webapp config appsettings set --name blanca-luxury-api --resource-group "$RESOURCE_GROUP" --settings WEBSITE_LOCKED=false
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
