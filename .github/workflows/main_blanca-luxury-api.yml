@@ -39,7 +39,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./api
+          path: |
+            ./api/dist
+            ./api/package.json
+            ./api/prisma
+            ./api/pnpm-lock.yaml
+            ./api/.npmrc
 
   deploy:
     runs-on: ubuntu-latest
@@ -68,8 +73,9 @@ jobs:
             --name blanca-luxury-api \
             --resource-group "$RESOURCE_GROUP" \
             --settings \
-              SCM_DO_BUILD_DURING_DEPLOYMENT=false \
-              ENABLE_ORYX_BUILD=false \
+               SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+              ENABLE_ORYX_BUILD=true \
+              PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x \
               WEBSITE_NODE_DEFAULT_VERSION=22.x
 
       - name: Deploy to Azure Web App
