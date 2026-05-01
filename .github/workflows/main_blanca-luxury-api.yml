@@ -23,12 +23,11 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install, build, and test
+      - name: Install, build
         working-directory: ./api
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm run build
-          pnpm prune --prod
           echo -e "[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=false" > .deployment
 
       - name: Upload artifact for deployment job

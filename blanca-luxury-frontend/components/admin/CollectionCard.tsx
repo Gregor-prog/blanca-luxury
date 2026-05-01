@@ -8,9 +8,10 @@ import type { Collection } from '@/lib/types';
 interface CollectionCardProps {
   collection: Collection;
   onEdit?: (c: Collection) => void;
+  onDelete?: (c: Collection) => void;
 }
 
-export function CollectionCard({ collection, onEdit }: CollectionCardProps) {
+export function CollectionCard({ collection, onEdit, onDelete }: CollectionCardProps) {
   const status = collection.isActive ? 'Live' : 'Draft';
 
   return (
@@ -76,7 +77,7 @@ export function CollectionCard({ collection, onEdit }: CollectionCardProps) {
           {collection.isFeatured && (
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-admin-gold shadow-[0_0_8px_rgba(201,169,110,0.6)] animate-pulse"></span>
-              <span className="text-[11px] font-bold text-admin-gold uppercase tracking-widest text-[9px]">Featured</span>
+              <span className="text-[9px] font-bold text-admin-gold uppercase tracking-widest">Featured</span>
             </div>
           )}
         </div>
@@ -86,11 +87,19 @@ export function CollectionCard({ collection, onEdit }: CollectionCardProps) {
       <div className="bg-[#1D1B19]/50 px-6 py-3 border-t border-[#2E2C28] flex items-center justify-between">
         <div className="flex items-center gap-4">
           {onEdit && (
-            <button 
+            <button
               onClick={() => onEdit(collection)}
               className="text-[11px] font-bold text-admin-gold uppercase tracking-wider hover:opacity-80 transition-opacity"
             >
               Edit
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(collection)}
+              className="text-[11px] font-bold text-admin-danger/70 uppercase tracking-wider hover:text-admin-danger transition-colors"
+            >
+              Delete
             </button>
           )}
         </div>
