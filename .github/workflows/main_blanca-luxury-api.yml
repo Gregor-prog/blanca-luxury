@@ -6,6 +6,12 @@ on:
       - main
   workflow_dispatch:
 
+# Only one deployment at a time — queues rather than running in parallel.
+# Prevents the 409 Conflict from Azure's deployment lock.
+concurrency:
+  group: azure-deploy-api
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +29,7 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install, build
+      - name: Install and build
         working-directory: ./api
         run: |
           pnpm install --frozen-lockfile
