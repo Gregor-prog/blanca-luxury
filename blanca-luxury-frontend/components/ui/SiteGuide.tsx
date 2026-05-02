@@ -56,6 +56,7 @@ interface Action {
 }
 
 const ACTIONS: Action[] = [
+  {
     label: 'WhatsApp',
     sub: 'Fastest response — direct to team',
     href: 'https://wa.me/2348139910974',
