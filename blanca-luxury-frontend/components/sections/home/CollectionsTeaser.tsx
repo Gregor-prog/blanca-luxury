@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useGetCategoriesQuery } from "@/lib/store";
+import Image from "next/image";
+import { useGetAllCollectionsQuery } from "@/lib/store";
 
 function Skeleton() {
   return (
@@ -14,8 +15,8 @@ function Skeleton() {
 }
 
 export function CollectionsTeaser() {
-  const { data, isLoading } = useGetCategoriesQuery();
-  const categories = (data?.items ?? []).slice(0, 4);
+  const { data, isLoading } = useGetAllCollectionsQuery();
+  const collections = (data?.items ?? []).filter((c) => c.isActive).slice(0, 4);
 
   return (
     <section className="bg-[#1A1410] py-24 px-6 md:px-12 lg:px-20">
@@ -40,16 +41,23 @@ export function CollectionsTeaser() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <Skeleton />
-        ) : categories.length === 0 ? (
+        ) : collections.length === 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {["Living", "Dining", "Bedroom", "Office"].map((name, i) => (
-              <CategoryCard key={i} name={name} index={i} href="/collections" />
+              <CollectionCard key={i} name={name} index={i} href="/collections" coverUrl={null} />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((cat, i) => (
-              <CategoryCard key={cat.id} name={cat.name} index={i} href={`/collections/${cat.id}`} />
+            {collections.map((col, i) => (
+              <CollectionCard
+                key={col.id}
+                name={col.name}
+                index={i}
+                href={`/collections/${col.slug}`}
+                coverUrl={col.coverImageUrl ?? null}
+                badgeText={col.badgeText ?? null}
+              />
             ))}
           </div>
         )}
@@ -58,15 +66,37 @@ export function CollectionsTeaser() {
   );
 }
 
-function CategoryCard({ name, index, href }: { name: string; index: number; href: string }) {
+function CollectionCard({
+  name,
+  index,
+  href,
+  coverUrl,
+  badgeText,
+}: {
+  name: string;
+  index: number;
+  href: string;
+  coverUrl: string | null;
+  badgeText?: string | null;
+}) {
   return (
     <Link href={href} className="group block relative aspect-[3/4] overflow-hidden rounded-sm bg-[#2C2420]">
-      <div
-        className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-        style={{
-          background: `linear-gradient(135deg, hsl(${20 + index * 8},15%,16%) 0%, hsl(${20 + index * 8},12%,10%) 100%)`,
-        }}
-      />
+      {coverUrl ? (
+        <Image
+          src={coverUrl}
+          alt={name}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
+      ) : (
+        <div
+          className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+          style={{
+            background: `linear-gradient(135deg, hsl(${20 + index * 8},15%,16%) 0%, hsl(${20 + index * 8},12%,10%) 100%)`,
+          }}
+        />
+      )}
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
       <div className="absolute bottom-0 left-0 h-px w-0 bg-[#C9A96E] transition-all duration-500 group-hover:w-full" />
       <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
@@ -76,6 +106,11 @@ function CategoryCard({ name, index, href }: { name: string; index: number; href
         <h3 className="font-serif italic text-white text-xl md:text-2xl text-center group-hover:text-[#C9A96E] transition-colors duration-300">
           {name}
         </h3>
+        {badgeText && (
+          <span className="mt-2 font-sans text-[8px] text-admin-gold/70 tracking-widest uppercase border border-admin-gold/30 px-2 py-0.5 rounded-sm">
+            {badgeText}
+          </span>
+        )}
       </div>
       <span className="absolute bottom-4 right-4 font-sans text-[9px] text-white/30 group-hover:text-[#C9A96E] transition-colors duration-300">
         Explore →

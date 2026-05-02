@@ -2,11 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   useGetAdminProductsQuery,
   useGetAllCollectionsQuery,
   useGetInquiriesQuery,
   useGetAllShowroomsQuery,
+  useGetAdminProjectsQuery,
 } from '@/lib/store';
 
 function StatCard({
@@ -43,6 +45,7 @@ export default function DashboardPage() {
   const { data: collectionsData, isLoading: loadingCollections } = useGetAllCollectionsQuery();
   const { data: inquiriesData, isLoading: loadingInquiries } = useGetInquiriesQuery({});
   const { data: showroomsData, isLoading: loadingShowrooms } = useGetAllShowroomsQuery();
+  const { data: projectsData, isLoading: loadingProjects } = useGetAdminProjectsQuery({ limit: 6 });
 
   const totalProducts = productsData?.total ?? 0;
   const activeCollections = (collectionsData?.items ?? []).filter((c) => c.isActive).length;
@@ -50,6 +53,8 @@ export default function DashboardPage() {
   const totalInquiries = inquiriesData?.total ?? 0;
   const activeShowrooms = (showroomsData?.items ?? []).filter((s) => s.isActive);
   const showroomCities = activeShowrooms.map((s) => s.city).slice(0, 3).join(' · ') || '—';
+  const totalProjects = projectsData?.total ?? 0;
+  const featuredProjects = (projectsData?.items ?? []).filter((p) => p.isFeatured).length;
 
   const stats = [
     {
@@ -67,6 +72,14 @@ export default function DashboardPage() {
       subColor: 'text-admin-text-secondary',
       icon: 'collections',
       isLoading: loadingCollections,
+    },
+    {
+      label: 'Portfolio Projects',
+      value: String(totalProjects),
+      sub: `${featuredProjects} featured`,
+      subColor: featuredProjects > 0 ? 'text-admin-gold' : 'text-admin-text-secondary',
+      icon: 'home_work',
+      isLoading: loadingProjects,
     },
     {
       label: 'New Inquiries',
@@ -89,9 +102,11 @@ export default function DashboardPage() {
 
   const recentInquiries = (inquiriesData?.items ?? []).slice(0, 5);
 
+  const recentProjects = projectsData?.items ?? [];
   const quickActions = [
     { label: 'Add Product', icon: 'add', href: '/admin/products/add' },
     { label: 'New Collection', icon: 'create_new_folder', href: '/admin/collections' },
+    { label: 'Add Project', icon: 'home_work', href: '/admin/projects' },
     { label: 'View Inquiries', icon: 'mail', href: '/admin/inquiries' },
     { label: 'Manage Showrooms', icon: 'store', href: '/admin/showrooms' },
   ];
@@ -99,7 +114,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-10">
       {/* Stats Row */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
@@ -182,6 +197,79 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Recent Projects Strip */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-[13px] font-medium text-admin-text-primary uppercase tracking-wider">Recent Projects</h3>
+          <Link href="/admin/projects" className="text-[12px] font-medium text-admin-gold hover:opacity-80 transition-opacity">
+            View All →
+          </Link>
+        </div>
+
+        <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x">
+          {loadingProjects ? (
+            <div className="flex gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="min-w-[240px] h-[180px] bg-admin-surface border border-admin-border rounded-[8px] animate-pulse" />
+              ))}
+            </div>
+          ) : recentProjects.length > 0 ? (
+            recentProjects.map((project) => {
+              const imgUrl = project.coverImageUrl ?? project.media?.[0]?.url ?? null;
+              return (
+                <div
+                  key={project.id}
+                  className="min-w-[240px] max-w-[240px] bg-admin-surface border border-admin-border rounded-[8px] overflow-hidden group hover:border-admin-gold/30 transition-all duration-300 flex flex-col snap-start"
+                >
+                  <div className="relative w-full h-[120px] bg-admin-surface-elevated overflow-hidden">
+                    {imgUrl ? (
+                      <Image src={imgUrl} alt={project.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[28px] text-admin-border">image</span>
+                      </div>
+                    )}
+                    <div className="absolute top-2 left-2">
+                      <span className="px-1.5 py-0.5 rounded-[2px] text-[8px] font-bold uppercase tracking-wider bg-admin-gold/90 text-admin-bg">
+                        {project.sector}
+                      </span>
+                    </div>
+                    {project.isFeatured && (
+                      <div className="absolute top-2 right-2">
+                        <span className="material-symbols-outlined text-[14px] text-admin-gold">star</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4 flex-1 flex flex-col justify-between">
+                    <p className="text-[12px] font-medium text-admin-text-primary line-clamp-2 leading-snug">{project.title}</p>
+                    <div className="flex items-center justify-between mt-3">
+                      {project.location && (
+                        <span className="text-[10px] text-admin-text-muted flex items-center gap-0.5">
+                          <span className="material-symbols-outlined text-[11px]">location_on</span>
+                          {project.location}
+                        </span>
+                      )}
+                      <span className={`w-1.5 h-1.5 rounded-full ml-auto ${project.isActive ? 'bg-admin-success' : 'bg-admin-text-muted'}`} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="w-full bg-admin-surface/20 border border-admin-border border-dashed p-8 text-center rounded-[8px]">
+              <p className="text-[12px] text-admin-text-muted">No projects yet.</p>
+            </div>
+          )}
+          <Link
+            href="/admin/projects"
+            className="min-w-[240px] h-[180px] border-2 border-dashed border-admin-border/30 rounded-[8px] flex flex-col items-center justify-center gap-3 text-admin-text-muted hover:border-admin-gold/50 hover:text-admin-gold transition-all cursor-pointer snap-start"
+          >
+            <span className="material-symbols-outlined text-[32px]">add_circle</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">New Project</span>
+          </Link>
+        </div>
+      </section>
 
       {/* Active Collections Strip */}
       <section>

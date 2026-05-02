@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useGetAdminProjectsQuery, useDeleteProjectMutation } from '@/lib/store';
+import { useGetAdminProjectsQuery, useDeleteProjectMutation, useLazyGetProjectByIdQuery } from '@/lib/store';
 import { RoleGuard } from '@/components/admin/RoleGuard';
 import { AddProjectPanel } from '@/components/admin/AddProjectPanel';
 import type { ProjectListItem, ProjectSector } from '@/lib/types';
@@ -99,9 +99,12 @@ function ProjectCard({
               Delete
             </button>
           </div>
-          <span className="text-[10px] text-admin-text-muted font-medium">
-            {project.media.length} media
-          </span>
+          {project.media.length > 0 && (
+            <span className="text-[10px] text-admin-text-muted font-medium flex items-center gap-1">
+              <span className="material-symbols-outlined text-[11px]">photo_library</span>
+              Has media
+            </span>
+          )}
         </div>
       </div>
     </article>
@@ -115,8 +118,10 @@ export default function ProjectsPage() {
 function ProjectsContent() {
   const [sectorFilter, setSectorFilter] = useState<ProjectSector | 'ALL'>('ALL');
   const [deleteProject] = useDeleteProjectMutation();
+  const [fetchProjectDetail] = useLazyGetProjectByIdQuery();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectListItem | null>(null);
+  const [editingDetail, setEditingDetail] = useState<import('@/lib/types').ProjectDetail | null>(null);
 
   const { data, isLoading, isError } = useGetAdminProjectsQuery(
     sectorFilter !== 'ALL' ? { sector: sectorFilter } : {}
@@ -130,9 +135,15 @@ function ProjectsContent() {
     await deleteProject(id);
   };
 
-  const handleEdit = (project: ProjectListItem) => {
+  const handleEdit = async (project: ProjectListItem) => {
     setEditingProject(project);
     setIsPanelOpen(true);
+    try {
+      const detail = await fetchProjectDetail(project.id).unwrap();
+      setEditingDetail(detail);
+    } catch {
+      // fall back to list data — panel still works with partial info
+    }
   };
 
   const handleAdd = () => {
@@ -203,22 +214,30 @@ function ProjectsContent() {
         </div>
       )}
 
-      <AddProjectPanel 
-        isOpen={isPanelOpen} 
+      <AddProjectPanel
+        isOpen={isPanelOpen}
         onClose={() => {
           setIsPanelOpen(false);
           setEditingProject(null);
-        }} 
+          setEditingDetail(null);
+        }}
         initialData={editingProject ? {
           id: editingProject.id,
-          title: editingProject.title,
-          sector: editingProject.sector,
-          location: editingProject.location ?? '',
-          year: editingProject.year ?? undefined,
-          description: '', // ListItem doesn't have description
-          clientName: '', // ListItem doesn't have clientName
-          isFeatured: editingProject.isFeatured,
-          isActive: editingProject.isActive
+          title: editingDetail?.title ?? editingProject.title,
+          sector: editingDetail?.sector ?? editingProject.sector,
+          location: editingDetail?.location ?? editingProject.location ?? '',
+          year: editingDetail?.year ?? editingProject.year ?? undefined,
+          description: editingDetail?.description ?? '',
+          clientName: editingDetail?.clientName ?? '',
+          isFeatured: editingDetail?.isFeatured ?? editingProject.isFeatured,
+          isActive: editingDetail?.isActive ?? editingProject.isActive,
+          coverImageUrl: editingDetail?.coverImageUrl ?? editingProject.coverImageUrl,
+          existingMedia: (editingDetail?.media ?? editingProject.media).map((m) => ({
+            id: m.id,
+            url: m.url,
+            mediaType: m.mediaType,
+            displayOrder: m.displayOrder ?? 0,
+          })),
         } : undefined}
       />
 

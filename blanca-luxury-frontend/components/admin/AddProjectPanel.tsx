@@ -1,9 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  useCreateProjectMutation, 
-  useUpdateProjectMutation 
+import Image from 'next/image';
+import {
+  useCreateProjectMutation,
+  useUpdateProjectMutation,
+  useUploadProjectCoverMutation,
+  useAddProjectMediaMutation,
+  useDeleteProjectMediaMutation,
 } from '@/lib/store';
 import type { ProjectSector } from '@/lib/types';
 
@@ -17,9 +21,11 @@ export interface ProjectFormData {
   clientName?: string;
   isFeatured: boolean;
   isActive: boolean;
+  coverImageUrl?: string | null;
+  existingMedia?: { id: string; url: string; mediaType: string; displayOrder: number }[];
 }
 
-interface ImageFile {
+interface NewImageFile {
   file: File;
   preview: string;
 }
@@ -35,12 +41,15 @@ const SECTOR_OPTIONS: ProjectSector[] = [
   'COMMERCIAL',
   'HOSPITALITY',
   'MEDICAL',
-  'GOVERNMENT'
+  'GOVERNMENT',
 ];
 
 export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPanelProps) {
   const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
   const [updateProject, { isLoading: isUpdating }] = useUpdateProjectMutation();
+  const [uploadCover, { isLoading: isUploadingCover }] = useUploadProjectCoverMutation();
+  const [addMedia, { isLoading: isAddingMedia }] = useAddProjectMediaMutation();
+  const [deleteMedia] = useDeleteProjectMediaMutation();
 
   const [title, setTitle] = useState('');
   const [sector, setSector] = useState<ProjectSector>('RESIDENTIAL');
@@ -50,12 +59,14 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
   const [clientName, setClientName] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  
-  const [images, setImages] = useState<ImageFile[]>([]);
-  const [error, setError] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isLoading = isCreating || isUpdating;
+  const [newImages, setNewImages] = useState<NewImageFile[]>([]);
+  const [existingMedia, setExistingMedia] = useState<ProjectFormData['existingMedia']>([]);
+  const [removedMediaIds, setRemovedMediaIds] = useState<string[]>([]);
+  const [error, setError] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const isLoading = isCreating || isUpdating || isUploadingCover || isAddingMedia;
   const isEdit = !!initialData?.id;
 
   useEffect(() => {
@@ -68,6 +79,7 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
       setClientName(initialData.clientName ?? '');
       setIsFeatured(initialData.isFeatured ?? false);
       setIsActive(initialData.isActive ?? true);
+      setExistingMedia(initialData.existingMedia ?? []);
     } else {
       setTitle('');
       setSector('RESIDENTIAL');
@@ -77,24 +89,31 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
       setClientName('');
       setIsFeatured(false);
       setIsActive(true);
+      setExistingMedia([]);
     }
-    setImages([]);
+    setNewImages([]);
+    setRemovedMediaIds([]);
     setError('');
   }, [initialData, isOpen]);
 
   const addFiles = useCallback((files: FileList | null) => {
     if (!files) return;
-    const newImages = Array.from(files)
+    const added = Array.from(files)
       .filter((f) => f.type.startsWith('image/'))
       .map((file) => ({ file, preview: URL.createObjectURL(file) }));
-    setImages((prev) => [...prev, ...newImages]);
+    setNewImages((prev) => [...prev, ...added]);
   }, []);
 
-  const removeImage = (idx: number) => {
-    setImages((prev) => {
+  const removeNewImage = (idx: number) => {
+    setNewImages((prev) => {
       URL.revokeObjectURL(prev[idx].preview);
       return prev.filter((_, i) => i !== idx);
     });
+  };
+
+  const markExistingRemoved = (id: string) => {
+    setRemovedMediaIds((prev) => [...prev, id]);
+    setExistingMedia((prev) => prev?.filter((m) => m.id !== id));
   };
 
   const handleSave = async () => {
@@ -106,12 +125,10 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
 
     try {
       if (isEdit && initialData?.id) {
-        // For updates, we might still want to use standard DTO if no images are added,
-        // but it's safer to check how the backend handles PATCH with multipart.
-        // For now, let's keep PATCH as standard JSON unless the user asks to upload images on edit.
+        // 1. Update metadata
         await updateProject({
           id: initialData.id,
-          body: { 
+          body: {
             title: title.trim(),
             sector,
             location: location.trim() || undefined,
@@ -119,9 +136,21 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
             description: description.trim() || undefined,
             clientName: clientName.trim() || undefined,
             isFeatured,
-            isActive
+            isActive,
           },
         }).unwrap();
+
+        // 2. Delete removed media
+        await Promise.all(
+          removedMediaIds.map((mediaId) =>
+            deleteMedia({ projectId: initialData.id!, mediaId }).unwrap()
+          )
+        );
+
+        // 3. Upload new images
+        if (newImages.length > 0) {
+          await addMedia({ id: initialData.id, files: newImages.map((i) => i.file) }).unwrap();
+        }
       } else {
         const fd = new FormData();
         fd.append('title', title.trim());
@@ -132,18 +161,17 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
         if (clientName) fd.append('clientName', clientName.trim());
         fd.append('isFeatured', String(isFeatured));
         fd.append('isActive', String(isActive));
-        
-        images.forEach((img) => {
-          fd.append('images', img.file);
-        });
-
+        newImages.forEach((img) => fd.append('files', img.file));
         await createProject(fd).unwrap();
       }
       onClose();
-    } catch (err: unknown) {
+    } catch {
       setError('Failed to save project. Please try again.');
     }
   };
+
+  const visibleExisting = existingMedia ?? [];
+  const totalMediaCount = visibleExisting.length + newImages.length;
 
   return (
     <>
@@ -171,6 +199,7 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
             </div>
           )}
 
+          {/* Fields */}
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="admin-label">Project Title *</label>
@@ -205,7 +234,6 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
                   onChange={(e) => setYear(Number(e.target.value))}
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="admin-label">Location</label>
                 <input
@@ -239,71 +267,104 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
             </div>
           </div>
 
-          {!isEdit && (
-            <div className="space-y-4 border-t border-admin-border/20 pt-6">
-              <label className="admin-label">Project Media (Optional)</label>
-              
-              <div 
+          {/* Media Section — shown for both create and edit */}
+          <div className="space-y-4 border-t border-admin-border/20 pt-6">
+            <div className="flex items-center justify-between">
+              <label className="admin-label !mb-0">
+                Project Media
+                {totalMediaCount > 0 && (
+                  <span className="ml-2 text-admin-gold font-bold">{totalMediaCount}</span>
+                )}
+              </label>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-[10px] font-bold text-admin-gold uppercase tracking-widest hover:opacity-80 transition-opacity flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-[14px]">add</span>
+                Add Images
+              </button>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => addFiles(e.target.files)}
+            />
+
+            {totalMediaCount === 0 ? (
+              <div
                 onClick={() => fileInputRef.current?.click()}
                 className="border-2 border-dashed border-admin-border/40 rounded-[8px] p-8 bg-admin-surface-elevated/20 flex flex-col items-center justify-center text-center group hover:border-admin-gold/50 transition-all cursor-pointer"
               >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => addFiles(e.target.files)}
-                />
                 <span className="material-symbols-outlined text-[36px] text-admin-text-muted group-hover:text-admin-gold transition-colors mb-2">add_a_photo</span>
                 <p className="text-[13px] font-medium text-admin-text-primary mb-1">Add project pictures</p>
                 <p className="text-[11px] text-admin-text-muted">High resolution images (Max 50MB each)</p>
               </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {/* Existing images */}
+                {visibleExisting.map((m) => (
+                  <div key={m.id} className="relative aspect-square group rounded-[4px] overflow-hidden border border-admin-border">
+                    <Image src={m.url} alt="" fill className="object-cover" sizes="160px" />
+                    <button
+                      onClick={() => markExistingRemoved(m.id)}
+                      className="absolute top-1 right-1 bg-admin-bg/80 text-admin-danger rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">delete</span>
+                    </button>
+                  </div>
+                ))}
 
-              {images.length > 0 && (
-                <div className="grid grid-cols-3 gap-3 mt-4">
-                  {images.map((img, idx) => (
-                    <div key={idx} className="relative aspect-square group rounded-[4px] overflow-hidden border border-admin-border">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.preview} alt="Preview" className="w-full h-full object-cover" />
-                      <button 
-                        onClick={() => removeImage(idx)}
-                        className="absolute top-1 right-1 bg-admin-bg/80 text-admin-danger rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <span className="material-symbols-outlined text-[14px]">close</span>
-                      </button>
+                {/* New images (not yet uploaded) */}
+                {newImages.map((img, idx) => (
+                  <div key={idx} className="relative aspect-square group rounded-[4px] overflow-hidden border border-admin-gold/30">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img.preview} alt="New" className="w-full h-full object-cover" />
+                    <div className="absolute bottom-0 left-0 right-0 bg-admin-gold/80 py-0.5 text-center">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-admin-bg">New</span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    <button
+                      onClick={() => removeNewImage(idx)}
+                      className="absolute top-1 right-1 bg-admin-bg/80 text-admin-danger rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">close</span>
+                    </button>
+                  </div>
+                ))}
 
+                {/* Add more button */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square rounded-[4px] border-2 border-dashed border-admin-border/40 hover:border-admin-gold/50 transition-colors flex flex-col items-center justify-center gap-1 group"
+                >
+                  <span className="material-symbols-outlined text-[24px] text-admin-text-muted group-hover:text-admin-gold transition-colors">add_photo_alternate</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-admin-text-muted group-hover:text-admin-gold transition-colors">Add</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Featured toggle */}
           <div className="space-y-4 border-t border-admin-border/20 pt-6">
             <div className="flex items-center justify-between">
               <label className="admin-label !mb-0">Featured Project</label>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
-                />
+                <input type="checkbox" className="sr-only peer" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
                 <div className="w-10 h-6 bg-admin-border/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-admin-bg after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-admin-gold" />
               </label>
             </div>
           </div>
 
+          {/* Active toggle */}
           <div className="space-y-4 border-t border-admin-border/20 pt-6">
             <div className="flex items-center justify-between">
               <label className="admin-label !mb-0">Active / Visible</label>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
-                />
+                <input type="checkbox" className="sr-only peer" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
                 <div className="w-10 h-6 bg-admin-border/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-admin-bg after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-admin-gold" />
               </label>
             </div>
@@ -319,7 +380,7 @@ export function AddProjectPanel({ isOpen, onClose, initialData }: AddProjectPane
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
-                Processing...
+                {isAddingMedia ? 'Uploading media...' : isUploadingCover ? 'Uploading cover...' : 'Processing...'}
               </>
             ) : isEdit ? 'Update Project' : 'Create Project'}
           </button>

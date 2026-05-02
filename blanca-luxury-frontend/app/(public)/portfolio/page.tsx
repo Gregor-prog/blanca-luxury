@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useGetProjectsQuery } from "@/lib/store";
 import type { ProjectSector, ProjectListItem } from "@/lib/types";
 
@@ -116,7 +117,7 @@ export default function PortfolioPage() {
         <div className="py-12 md:py-16">
           {/* Featured project */}
           <section className="px-4 md:px-16 mb-16 md:mb-24 max-w-[1600px] mx-auto">
-            <div className="relative w-full h-[450px] md:h-[650px] lg:h-[750px] rounded-lg overflow-hidden group cursor-pointer">
+            <Link href={`/portfolio/${projects[0].slug}`} className="block relative w-full h-[450px] md:h-[650px] lg:h-[750px] rounded-lg overflow-hidden group cursor-pointer">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
                 style={{ backgroundImage: `url('${coverUrl(projects[0])}')` }}
@@ -138,12 +139,12 @@ export default function PortfolioPage() {
                   </h2>
                 </div>
                 <div className="w-full md:w-auto mt-4 md:mt-0">
-                  <button className="w-full md:w-auto px-8 md:px-10 py-3 md:py-4 border border-white text-white font-sans font-bold text-[10px] tracking-widest uppercase hover:bg-white hover:text-[#1A1410] transition-all duration-500">
+                  <span className="block w-full md:w-auto px-8 md:px-10 py-3 md:py-4 border border-white text-white font-sans font-bold text-[10px] tracking-widest uppercase hover:bg-white hover:text-[#1A1410] transition-all duration-500 text-center">
                     View Project →
-                  </button>
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           </section>
 
           {/* Grid */}
@@ -151,7 +152,7 @@ export default function PortfolioPage() {
             <section className="px-4 md:px-16 mb-16 md:mb-24 max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 {projects.slice(1).map((project) => (
-                  <div key={project.id} className="group cursor-pointer">
+                  <Link key={project.id} href={`/portfolio/${project.slug}`} className="group cursor-pointer block">
                     <div className="relative h-[350px] md:h-[480px] lg:h-[550px] rounded-lg overflow-hidden mb-5 md:mb-6">
                       <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -180,7 +181,7 @@ export default function PortfolioPage() {
                         {SECTOR_LABELS[project.sector] ?? project.sector}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </section>

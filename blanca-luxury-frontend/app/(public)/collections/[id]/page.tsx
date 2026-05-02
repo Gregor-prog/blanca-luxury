@@ -1,95 +1,85 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import React from "react";
 import Link from "next/link";
-import {
-  useGetProductByIdQuery,
-  useGetRelatedProductsQuery,
-} from "@/lib/store";
-import type { ProductDetail, ProductListItem } from "@/lib/types";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { useGetCollectionsQuery, useGetCollectionProductsQuery } from "@/lib/store";
+import type { CollectionProductItem } from "@/lib/types";
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-function allImages(product: ProductDetail): { url: string; alt: string }[] {
-  return product.media
-    .filter((m) => m.mediaType === "IMAGE")
-    .sort((a, b) => a.displayOrder - b.displayOrder)
-    .map((m) => ({ url: m.url, alt: m.altText ?? product.name }));
-}
-
-function primaryImage(product: ProductListItem): string {
-  const p = product.media.find((m) => m.isPrimary) ?? product.media[0];
-  return p?.url ?? "/placeholder.jpg";
-}
-
-// ─── loading skeleton ─────────────────────────────────────────────────────────
-
-function LoadingSkeleton() {
+function ProductCard({ item }: { item: CollectionProductItem }) {
+  const img = item.product.media?.[0]?.url ?? null;
   return (
-    <main className="pt-24 min-h-screen bg-[#fff8f1] animate-pulse">
-      <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-6rem)]">
-        <div className="w-full md:w-[55%] h-[80vh] bg-linear-to-r from-[#F0EBE3] via-[#E8E0D5] to-[#F0EBE3] bg-size-[200%_100%] animate-[shimmer_2s_infinite]" />
-        <div className="w-full md:w-[45%] p-12 md:p-20">
-          <div className="h-4 w-32 bg-[#E8E0D5] rounded mb-8" />
-          <div className="h-6 w-24 bg-[#E8E0D5] rounded-full mb-6" />
-          <div className="h-16 w-3/4 bg-[#E8E0D5] rounded mb-4" />
-          <div className="h-4 w-1/2 bg-[#E8E0D5] rounded mb-12" />
-          <div className="grid grid-cols-2 gap-8 mb-12">
-            {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="h-12 bg-[#E8E0D5] rounded" />
-            ))}
-          </div>
-          <div className="font-sans text-[11px] text-[#C9A96E] italic">
-            Curating your collection…
-          </div>
-        </div>
+    <Link href={`/products/${item.product.slug}`} className="group block">
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#2C2420] mb-4 rounded-sm">
+        {img ? (
+          <Image
+            src={img}
+            alt={item.product.name}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-b from-[#2C2420] to-[#1A1410]" />
+        )}
+        <div className="absolute inset-0 bg-[#1A1410]/0 group-hover:bg-[#1A1410]/30 transition-all duration-500" />
+        {item.product.isFeatured && (
+          <span className="absolute top-3 left-3 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border border-[#C9A96E]/60 text-[#C9A96E] bg-[#1A1410]/70 rounded-sm">
+            Featured
+          </span>
+        )}
       </div>
-    </main>
+      <div className="px-1">
+        <h3 className="font-serif text-[16px] text-[#1e1b15] group-hover:text-[#745a27] transition-colors leading-snug mb-0.5">
+          {item.product.name}
+        </h3>
+        <p className="font-sans text-[9px] text-[#8B7D72] uppercase tracking-widest">
+          {item.product.category?.name ?? "Luxury"}
+        </p>
+      </div>
+    </Link>
   );
 }
 
-// ─── page ─────────────────────────────────────────────────────────────────────
+function ProductSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="aspect-[3/4] bg-[#E8E0D5] rounded-sm mb-4" />
+      <div className="h-4 w-3/4 bg-[#E8E0D5] rounded mb-2" />
+      <div className="h-3 w-1/2 bg-[#E8E0D5] rounded" />
+    </div>
+  );
+}
 
-export default function ProductDetailPage() {
+export default function CollectionDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const id = params?.id as string;
+  const slug = params?.id as string;
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { data: collectionsData, isLoading: loadingCollections } = useGetCollectionsQuery();
+  const collection = collectionsData?.bySlug[slug];
 
-  const { data: product, isLoading, isError } = useGetProductByIdQuery(id, {
-    skip: !id,
-  });
-
-  // Related products: only run once we know the category
-  const { data: relatedData } = useGetRelatedProductsQuery(
-    { categoryId: product?.category?.id ?? "", excludeId: id },
-    { skip: !product?.category?.id },
+  const { data: products, isLoading: loadingProducts } = useGetCollectionProductsQuery(
+    collection?.id ?? "",
+    { skip: !collection?.id },
   );
 
-  const related = relatedData?.items ?? [];
+  const isLoading = loadingCollections || (!!collection && loadingProducts);
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (loadingCollections) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center bg-[#fff8f1]">
+        <div className="w-10 h-10 border-2 border-[#C9A96E]/30 border-t-[#C9A96E] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  if (isError || !product) {
+  if (!collection) {
     return (
       <main className="pt-32 min-h-screen flex flex-col items-center justify-center text-center bg-[#fff8f1]">
-        <svg
-          className="w-24 h-24 text-[#E8E0D5] mb-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1}
-            d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
-          />
-        </svg>
         <h1 className="font-serif italic text-4xl text-[#1e1b15] mb-6">
-          Piece Not Found
+          Collection Not Found
         </h1>
         <button
           onClick={() => router.push("/collections")}
@@ -101,223 +91,103 @@ export default function ProductDetailPage() {
     );
   }
 
-  const images = allImages(product);
-  const displayImages =
-    images.length > 0
-      ? images
-      : [{ url: "/placeholder.jpg", alt: product.name }];
-
-  const handleWhatsApp = () => {
-    const currentUrl = window.location.href;
-    const text = encodeURIComponent(
-      `Hi, I'd like to inquire about ${product.name}\n\n${currentUrl}`,
-    );
-    window.open(`https://wa.me/2348139910974?text=${text}`, "_blank");
-  };
-
-  const formatPrice = () => {
-    if (product.priceOnRequest || !product.price) return "Price on Request";
-    return `$${Number(product.price).toLocaleString()}`;
-  };
+  const items = products ?? [];
 
   return (
-    <main className="pt-24 min-h-screen bg-[#fff8f1]">
-      <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-6rem)]">
+    <main className="min-h-screen bg-[#fff8f1]">
+      {/* Hero */}
+      <section className="bg-[#1A1410] relative overflow-hidden min-h-[340px] md:min-h-[420px] flex flex-col justify-end px-8 md:px-16 py-16 md:py-24">
+        {collection.coverImageUrl && (
+          <Image
+            src={collection.coverImageUrl}
+            alt={collection.name}
+            fill
+            className="object-cover opacity-30"
+            priority
+            sizes="100vw"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1410] via-[#1A1410]/70 to-transparent" />
 
-        {/* LEFT — IMAGE GALLERY */}
-        <div className="w-full md:w-[55%] flex flex-col">
-          <div className="grow overflow-hidden bg-surface-container-low relative min-h-[50vh] md:min-h-full">
-            <img
-              alt={displayImages[activeImageIndex]?.alt}
-              className="w-full h-full object-cover absolute inset-0 transition-opacity duration-500"
-              src={displayImages[activeImageIndex]?.url}
-            />
-          </div>
-          {/* Thumbnail strip */}
-          {displayImages.length > 1 && (
-            <div className="flex gap-4 p-8 bg-[#fff8f1] overflow-x-auto no-scrollbar">
-              {displayImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setActiveImageIndex(idx)}
-                  className={`w-20 h-20 min-w-20 p-1 cursor-pointer transition-colors border-2 ${activeImageIndex === idx ? "border-[#C9A96E]" : "border-transparent hover:border-outline-variant"}`}
-                >
-                  <img
-                    alt={`${product.name} thumbnail ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                    src={img.url}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* RIGHT — PRODUCT INFO */}
-        <div className="w-full md:w-[45%] p-12 md:p-20 md:sticky md:top-24 h-fit">
-          {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 mb-8 text-[10px] tracking-[0.2em] uppercase text-secondary font-medium whitespace-nowrap overflow-x-auto no-scrollbar">
-            <Link
-              href="/collections"
-              className="hover:text-[#745a27] transition-colors"
-            >
-              Collections
-            </Link>
-            <span className="text-outline-variant">/</span>
-            {product.category && (
-              <>
-                <span>{product.category.name}</span>
-                <span className="text-outline-variant">/</span>
-              </>
-            )}
-            <span className="text-[#1e1b15] truncate">{product.name}</span>
+        <div className="relative z-10 max-w-4xl">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 font-sans text-[9px] uppercase tracking-[0.3em] text-[#8B7D72] mb-6">
+            <Link href="/" className="hover:text-[#C9A96E] transition-colors">Home</Link>
+            <span>/</span>
+            <Link href="/collections" className="hover:text-[#C9A96E] transition-colors">Collections</Link>
+            <span>/</span>
+            <span className="text-[#C9A96E]">{collection.name}</span>
           </nav>
 
-          {/* Category badge */}
-          <div className="inline-block px-4 py-1.5 border border-primary-container rounded-full text-[10px] tracking-[0.2em] text-[#745a27] font-bold mb-6">
-            {product.category?.name ?? "Luxury"} · {product.origin}
-          </div>
-
-          {/* Name */}
-          <h1 className="font-serif italic text-5xl md:text-6xl text-[#2C2420] font-light leading-tight mb-4">
-            {product.name}
+          {collection.badgeText && (
+            <span className="inline-block mb-3 px-3 py-1 text-[9px] font-bold uppercase tracking-widest border border-[#C9A96E]/50 text-[#C9A96E] rounded-sm">
+              {collection.badgeText}
+            </span>
+          )}
+          <h1 className="font-serif italic text-4xl md:text-6xl text-white leading-tight mb-4">
+            {collection.name}
           </h1>
-
-          {/* Price */}
-          <p className="font-serif text-2xl text-[#C9A96E] mb-6">
-            {formatPrice()}
-          </p>
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-y-8 gap-x-12 mb-12 pb-12 border-b border-outline-variant/40">
-            {product.materials && (
-              <div>
-                <h4 className="font-sans text-[10px] tracking-[0.2em] text-secondary uppercase mb-2">
-                  Material
-                </h4>
-                <p className="font-sans text-sm text-[#1e1b15]">
-                  {product.materials}
-                </p>
-              </div>
-            )}
-            {product.dimensions && (
-              <div>
-                <h4 className="font-sans text-[10px] tracking-[0.2em] text-secondary uppercase mb-2">
-                  Dimensions
-                </h4>
-                <p className="font-sans text-sm text-[#1e1b15]">
-                  {product.dimensions}
-                </p>
-              </div>
-            )}
-            <div>
-              <h4 className="font-sans text-[10px] tracking-[0.2em] text-secondary uppercase mb-2">
-                Origin
-              </h4>
-              <p className="font-sans text-sm text-[#1e1b15]">
-                {product.origin}
-              </p>
-            </div>
-            {product.leadTime && (
-              <div>
-                <h4 className="font-sans text-[10px] tracking-[0.2em] text-secondary uppercase mb-2">
-                  Lead Time
-                </h4>
-                <p className="font-sans text-sm text-[#1e1b15]">
-                  {product.leadTime}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Description */}
-          {product.description && (
-            <div className="font-serif text-xl text-[#2C2420] leading-relaxed mb-12 max-w-prose">
-              {product.description}
-            </div>
+          {collection.description && (
+            <p className="font-sans text-[13px] text-white/50 max-w-lg leading-relaxed">
+              {collection.description}
+            </p>
           )}
-
-          {/* Tags */}
-          {product.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-12">
-              {product.tags.map(({ tag }) => (
-                <span
-                  key={tag.id}
-                  className="px-3 py-1 border border-[#C9A96E]/30 rounded-full text-[10px] text-secondary tracking-widest uppercase"
-                >
-                  {tag.name}
-                </span>
-              ))}
-            </div>
+          {items.length > 0 && (
+            <p className="mt-4 font-sans text-[10px] text-[#C9A96E] uppercase tracking-[0.3em]">
+              {items.length} {items.length === 1 ? "piece" : "pieces"}
+            </p>
           )}
-
-          {/* CTAs */}
-          <div className="space-y-6">
-            <button
-              onClick={handleWhatsApp}
-              className="w-full bg-[#1E1B15] text-[#C9A96E] py-5 rounded-full font-sans font-bold tracking-widest uppercase hover:opacity-90 transition-opacity flex justify-center items-center gap-3"
-            >
-              Inquire on WhatsApp
-            </button>
-            <div className="flex flex-col gap-4 items-start">
-              <div className="relative group">
-                <button className="flex items-center gap-2 text-secondary text-xs uppercase tracking-widest hover:text-[#1e1b15] transition-colors font-sans py-2">
-                  Schedule a Showroom Visit
-                  <span className="material-symbols-outlined text-sm">
-                    expand_more
-                  </span>
-                </button>
-                <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-xl rounded-xl py-4 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 z-10">
-                  <a
-                    className="block px-6 py-2 hover:bg-surface-container-low font-sans text-xs uppercase tracking-widest text-[#1e1b15] transition-colors"
-                    href="#"
-                  >
-                    Lagos
-                  </a>
-                  <a
-                    className="block px-6 py-2 hover:bg-surface-container-low font-sans text-xs uppercase tracking-widest text-[#1e1b15] transition-colors"
-                    href="#"
-                  >
-                    Port Harcourt
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+      </section>
 
-      {/* RELATED PRODUCTS */}
-      {related.length > 0 && (
-        <section className="px-6 md:px-12 py-32 bg-[#fbf2e7]">
-          <h2 className="font-serif text-4xl text-[#2C2420] mb-16 tracking-widest text-center uppercase">
-            You May Also Love
-          </h2>
-          <div className="flex gap-6 overflow-x-auto no-scrollbar pb-12 scroll-smooth">
-            {related.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => router.push(`/collections/${item.id}`)}
-                className="min-w-[80vw] sm:min-w-65 md:min-w-75 w-[80vw] sm:w-70 md:w-80 bg-white p-6 md:p-8 rounded-lg group cursor-pointer transition-transform duration-500 hover:-translate-y-2 shrink-0"
-              >
-                <div className="aspect-4/5 overflow-hidden mb-6 bg-[#fff8f1]">
-                  <img
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    src={primaryImage(item)}
-                  />
-                </div>
-                <h3 className="font-serif text-xl mb-1 uppercase tracking-widest text-[#1e1b15] truncate">
-                  {item.name}
-                </h3>
-                <p className="text-[#C9A96E] font-sans text-xs font-bold tracking-widest uppercase">
-                  {item.category?.name ?? "—"}
-                </p>
-              </div>
-            ))}
+      {/* Products Grid */}
+      <section className="max-w-[1400px] mx-auto py-20 px-6 md:px-12 lg:px-20">
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <ProductSkeleton key={n} />)}
           </div>
-        </section>
-      )}
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-px bg-[#C9A96E]/30 mb-8" />
+            <h3 className="font-serif italic text-2xl text-[#1e1b15] mb-3">
+              No pieces in this collection yet
+            </h3>
+            <p className="font-sans text-sm text-[#8B7D72] mb-8">
+              Our curation team is still assembling this collection.
+            </p>
+            <Link
+              href="/collections"
+              className="text-[#C9A96E] border-b border-[#C9A96E] pb-1 uppercase tracking-widest text-xs font-bold hover:text-[#745a27] transition-colors"
+            >
+              Explore Other Collections →
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+            {[...items]
+              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .map((item) => (
+                <ProductCard key={item.product.id} item={item} />
+              ))}
+          </div>
+        )}
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="bg-[#1A1410] py-20 px-6 text-center border-t border-[#C9A96E]/10">
+        <p className="font-sans text-[10px] text-[#C9A96E] uppercase tracking-[0.35em] mb-4">
+          Discover More
+        </p>
+        <h2 className="font-serif italic text-3xl md:text-4xl text-white mb-8">
+          Explore the Full Catalogue
+        </h2>
+        <Link
+          href="/collections"
+          className="inline-block px-10 py-4 border border-[#C9A96E]/50 text-[#C9A96E] font-sans text-[11px] uppercase tracking-widest hover:bg-[#C9A96E] hover:text-[#1A1410] transition-all duration-300"
+        >
+          All Collections →
+        </Link>
+      </section>
     </main>
   );
 }

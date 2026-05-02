@@ -98,6 +98,41 @@ export const projectsApi = baseApi.injectEndpoints({
         { type: "Project", id: "LIST" },
       ],
     }),
+
+    uploadProjectCover: build.mutation<ProjectDetail, { id: string; file: File }>({
+      query: ({ id, file }) => {
+        const fd = new FormData();
+        fd.append("image", file);
+        return { url: `/projects/${id}/cover`, method: "POST", body: fd, formData: true };
+      },
+      invalidatesTags: (_result, _err, { id }) => [
+        { type: "Project", id },
+        { type: "Project", id: "LIST" },
+      ],
+    }),
+
+    addProjectMedia: build.mutation<ProjectDetail, { id: string; files: File[] }>({
+      query: ({ id, files }) => {
+        const fd = new FormData();
+        files.forEach((f) => fd.append("files", f));
+        return { url: `/projects/${id}/media`, method: "POST", body: fd, formData: true };
+      },
+      invalidatesTags: (_result, _err, { id }) => [
+        { type: "Project", id },
+        { type: "Project", id: "LIST" },
+      ],
+    }),
+
+    deleteProjectMedia: build.mutation<void, { projectId: string; mediaId: string }>({
+      query: ({ projectId, mediaId }) => ({
+        url: `/projects/${projectId}/media/${mediaId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _err, { projectId }) => [
+        { type: "Project", id: projectId },
+        { type: "Project", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -105,8 +140,12 @@ export const {
   useGetProjectsQuery,
   useGetAdminProjectsQuery,
   useGetProjectByIdQuery,
+  useLazyGetProjectByIdQuery,
   useGetProjectBySlugQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
+  useUploadProjectCoverMutation,
+  useAddProjectMediaMutation,
+  useDeleteProjectMediaMutation,
 } = projectsApi;
