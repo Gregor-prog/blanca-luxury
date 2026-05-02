@@ -20,16 +20,36 @@ export function Footer() {
                 className="h-10 md:h-12 w-auto object-contain brightness-110"
               />
             </div>
-            <div className="flex space-x-8">
+            <div className="flex flex-wrap gap-x-8 gap-y-2 justify-center md:justify-start">
               <a
                 className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
-                href="#"
+                href="https://www.instagram.com/blanca_luxury"
+                target="_blank"
+                rel="noreferrer"
               >
                 Instagram
               </a>
               <a
                 className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
-                href="#"
+                href="https://www.tiktok.com/@blanca_luxury"
+                target="_blank"
+                rel="noreferrer"
+              >
+                TikTok
+              </a>
+              <a
+                className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
+                href="https://www.linkedin.com/company/blanca-luxury-decor-ltd/posts/?feedView=all"
+                target="_blank"
+                rel="noreferrer"
+              >
+                LinkedIn
+              </a>
+              <a
+                className="text-[11px] text-[#8B7D72] font-medium uppercase tracking-widest hover:text-[#C9A96E] transition-colors duration-300"
+                href="https://wa.me/2348139910974"
+                target="_blank"
+                rel="noreferrer"
               >
                 WhatsApp
               </a>

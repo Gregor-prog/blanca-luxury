@@ -282,13 +282,41 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       </div>
 
       {/* Footer info */}
-      <div style={{ textAlign: "center", paddingBottom: 24 }}>
+      <div style={{ textAlign: "center", paddingBottom: 40 }}>
         <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--stone)", letterSpacing: "0.12em", marginBottom: 6 }}>
           +234 813 991 0974
         </p>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--stone)", letterSpacing: "0.12em" }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--stone)", letterSpacing: "0.12em", marginBottom: 24 }}>
           blancaluxurydecor@gmail.com
         </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
+          {[
+            { label: "IG",   href: "https://www.instagram.com/blanca_luxury" },
+            { label: "TK",   href: "https://www.tiktok.com/@blanca_luxury" },
+            { label: "LI",   href: "https://www.linkedin.com/company/blanca-luxury-decor-ltd/posts/?feedView=all" },
+            { label: "WA",   href: "https://wa.me/2348139910974" },
+          ].map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontFamily:    "var(--font-body)",
+                fontSize:      10,
+                fontWeight:    500,
+                letterSpacing: "0.2em",
+                color:         "var(--gold)",
+                textDecoration: "none",
+                opacity:       0.8,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
+            >
+              {s.label}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
