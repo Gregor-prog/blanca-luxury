@@ -1,12 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface BatchActionBarProps {
   selectedCount: number;
+  onDelete?: () => void;
+  onUpdateStatus?: (isActive: boolean) => void;
 }
 
-export function BatchActionBar({ selectedCount }: BatchActionBarProps) {
+export function BatchActionBar({ selectedCount, onDelete, onUpdateStatus }: BatchActionBarProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setIsDeleting(true);
+    try {
+      await onDelete();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (selectedCount === 0) return null;
 
   return (
@@ -17,19 +31,33 @@ export function BatchActionBar({ selectedCount }: BatchActionBarProps) {
         </span>
         
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 text-admin-text-primary hover:text-admin-gold transition-colors text-[12px] font-bold uppercase tracking-wider">
+          <button 
+            onClick={() => onUpdateStatus?.(true)}
+            className="flex items-center gap-2 text-admin-text-primary hover:text-admin-gold transition-colors text-[12px] font-bold uppercase tracking-wider"
+          >
             <span className="material-symbols-outlined text-[18px]">check_circle</span>
             Set Active
           </button>
           
-          <button className="flex items-center gap-2 text-admin-text-primary hover:text-admin-gold transition-colors text-[12px] font-bold uppercase tracking-wider">
+          <button 
+            onClick={() => onUpdateStatus?.(false)}
+            className="flex items-center gap-2 text-admin-text-primary hover:text-admin-gold transition-colors text-[12px] font-bold uppercase tracking-wider"
+          >
             <span className="material-symbols-outlined text-[18px]">draft</span>
             Set Draft
           </button>
           
-          <button className="flex items-center gap-2 text-admin-danger hover:opacity-80 transition-opacity text-[12px] font-bold uppercase tracking-wider">
-            <span className="material-symbols-outlined text-[18px]">delete</span>
-            Delete
+          <button 
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="flex items-center gap-2 text-admin-danger hover:opacity-80 transition-opacity text-[12px] font-bold uppercase tracking-wider disabled:opacity-50"
+          >
+            {isDeleting ? (
+              <span className="w-4 h-4 border-2 border-admin-danger/30 border-t-admin-danger rounded-full animate-spin"></span>
+            ) : (
+              <span className="material-symbols-outlined text-[18px]">delete</span>
+            )}
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </div>

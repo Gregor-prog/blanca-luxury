@@ -2,15 +2,18 @@
 
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
-import { useCreateShowroomMutation, useUploadShowroomCoverMutation } from '@/lib/store';
+import { useCreateShowroomMutation, useUpdateShowroomMutation, useUploadShowroomCoverMutation } from '@/lib/store';
+import type { Showroom } from '@/lib/types';
 
 interface AddShowroomPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: Showroom | null;
 }
 
-export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
+export function AddShowroomPanel({ isOpen, onClose, initialData }: AddShowroomPanelProps) {
   const [createShowroom, { isLoading: isCreating }] = useCreateShowroomMutation();
+  const [updateShowroom, { isLoading: isUpdating }] = useUpdateShowroomMutation();
   const [uploadCover, { isLoading: isUploading }] = useUploadShowroomCoverMutation();
 
   const [name, setName] = useState('');
@@ -26,6 +29,25 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  // Sync initial data when opened
+  React.useEffect(() => {
+    if (isOpen && initialData) {
+      setName(initialData.name);
+      setCity(initialData.city);
+      setAddress(initialData.address);
+      setPhones(initialData.phoneNumbers.length ? initialData.phoneNumbers : ['']);
+      setWhatsapp(initialData.whatsappNumber || '');
+      setEmail(initialData.email || '');
+      setInstagram(initialData.instagramHandle || '');
+      setLat(initialData.latitude != null ? String(initialData.latitude) : '');
+      setLng(initialData.longitude != null ? String(initialData.longitude) : '');
+      setIsActive(initialData.isActive);
+      setCoverPreview(initialData.coverImageUrl || null);
+    } else if (isOpen && !initialData) {
+      reset();
+    }
+  }, [isOpen, initialData]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -60,7 +82,7 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
     }
     setError('');
     try {
-      const showroom = await createShowroom({
+      const dto = {
         name: name.trim(),
         city: city.trim(),
         address: address.trim(),
@@ -71,20 +93,28 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
         latitude: lat ? parseFloat(lat) : undefined,
         longitude: lng ? parseFloat(lng) : undefined,
         isActive,
-      }).unwrap();
+      };
 
-      if (coverFile) {
-        await uploadCover({ id: showroom.id, file: coverFile }).unwrap();
+      let showroomId = initialData?.id;
+
+      if (initialData) {
+        await updateShowroom({ id: initialData.id, body: dto }).unwrap();
+      } else {
+        const showroom = await createShowroom(dto).unwrap();
+        showroomId = showroom.id;
       }
 
-      reset();
+      if (coverFile && showroomId) {
+        await uploadCover({ id: showroomId, file: coverFile }).unwrap();
+      }
+
       onClose();
     } catch {
-      setError('Failed to save showroom. Please try again.');
+      setError(`Failed to ${initialData ? 'update' : 'save'} showroom. Please try again.`);
     }
   };
 
-  const isLoading = isCreating || isUploading;
+  const isLoading = isCreating || isUpdating || isUploading;
 
   return (
     <>
@@ -97,7 +127,9 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
         className={`fixed right-0 top-0 w-full max-w-[480px] h-screen bg-admin-surface border-l-2 border-admin-gold z-[70] transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col shadow-2xl`}
       >
         <header className="px-8 py-6 border-b border-admin-border/50 flex justify-between items-center sticky top-0 bg-admin-surface/90 backdrop-blur z-10">
-          <h2 className="text-[18px] font-bold text-admin-text-primary tracking-tight">Add New Showroom</h2>
+          <h2 className="text-[18px] font-bold text-admin-text-primary tracking-tight">
+            {initialData ? 'Edit Showroom' : 'Add New Showroom'}
+          </h2>
           <button onClick={onClose} className="text-admin-text-muted hover:text-admin-text-primary transition-colors p-1">
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -287,12 +319,17 @@ export function AddShowroomPanel({ isOpen, onClose }: AddShowroomPanelProps) {
                 <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
                 Creating...
               </>
+            ) : isUpdating ? (
+              <>
+                <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
+                Updating...
+              </>
             ) : isUploading ? (
               <>
                 <div className="w-4 h-4 border-2 border-admin-bg border-t-transparent rounded-full animate-spin" />
                 Uploading image...
               </>
-            ) : 'Save Showroom'}
+            ) : initialData ? 'Update Showroom' : 'Save Showroom'}
           </button>
         </div>
       </aside>

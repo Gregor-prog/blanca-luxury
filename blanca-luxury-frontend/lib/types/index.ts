@@ -139,10 +139,12 @@ export interface ProductDetail extends ProductListItem {
 
 export interface PaginatedProducts {
   data: ProductListItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface ProductsQuery {
@@ -181,10 +183,12 @@ export interface ProjectDetail extends ProjectListItem {
 
 export interface PaginatedProjects {
   data: ProjectListItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface ProjectsQuery {
@@ -264,10 +268,12 @@ export interface Inquiry {
 
 export interface PaginatedInquiries {
   data: Inquiry[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface InquiriesQuery {

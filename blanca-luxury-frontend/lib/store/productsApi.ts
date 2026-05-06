@@ -18,7 +18,7 @@ export const productsApi = baseApi.injectEndpoints({
       transformResponse: (raw: PaginatedProducts): NormalisedProducts => {
         const byId: Record<string, (typeof raw.data)[number]> = {};
         for (const p of raw.data) byId[p.id] = p;
-        return { ...raw, items: raw.data, byId };
+        return { ...raw.meta, items: raw.data, byId };
       },
       providesTags: (result) =>
         result
@@ -39,7 +39,7 @@ export const productsApi = baseApi.injectEndpoints({
       transformResponse: (raw: PaginatedProducts): NormalisedProducts => {
         const byId: Record<string, (typeof raw.data)[number]> = {};
         for (const p of raw.data) byId[p.id] = p;
-        return { ...raw, items: raw.data, byId };
+        return { ...raw.meta, items: raw.data, byId };
       },
       providesTags: (result) =>
         result

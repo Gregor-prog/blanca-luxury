@@ -21,7 +21,19 @@ interface ShowroomProps {
   coverImageUrl?: string | null;
 }
 
-export function ShowroomCard({ showroom }: { showroom: ShowroomProps }) {
+export function ShowroomCard({ 
+  showroom,
+  onDelete,
+  onEdit,
+  onToggleActive,
+  onViewDetails
+}: { 
+  showroom: ShowroomProps;
+  onDelete?: (id: string) => void;
+  onEdit?: () => void;
+  onToggleActive?: (isActive: boolean) => void;
+  onViewDetails?: () => void;
+}) {
   return (
     <article className="bg-admin-surface border border-admin-border rounded-[8px] relative overflow-hidden group hover:border-admin-gold/30 transition-all duration-300">
       {/* Cover Image */}
@@ -56,7 +68,12 @@ export function ShowroomCard({ showroom }: { showroom: ShowroomProps }) {
             </div>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" checked={showroom.isActive} className="sr-only peer" readOnly />
+            <input 
+              type="checkbox" 
+              checked={showroom.isActive} 
+              className="sr-only peer" 
+              onChange={(e) => onToggleActive?.(e.target.checked)}
+            />
             <div className="w-9 h-5 bg-admin-border/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-admin-surface after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-admin-gold" />
           </label>
         </div>
@@ -105,10 +122,23 @@ export function ShowroomCard({ showroom }: { showroom: ShowroomProps }) {
         {/* Footer Actions */}
         <div className="flex items-center justify-between">
           <div className="flex items-center divide-x divide-admin-border/30">
-            <button className="pr-3 text-[12px] font-medium text-admin-gold hover:opacity-80 transition-opacity uppercase tracking-tight">Edit</button>
-            <button className="px-3 text-[12px] font-medium text-admin-danger hover:opacity-80 transition-opacity uppercase tracking-tight">Delete</button>
+            <button 
+              onClick={onEdit}
+              className="pr-3 text-[12px] font-medium text-admin-gold hover:opacity-80 transition-opacity uppercase tracking-tight"
+            >
+              Edit
+            </button>
+            <button 
+              onClick={() => onDelete?.(showroom.id)}
+              className="px-3 text-[12px] font-medium text-admin-danger hover:opacity-80 transition-opacity uppercase tracking-tight"
+            >
+              Delete
+            </button>
           </div>
-          <button className="text-[12px] font-bold text-admin-text-primary hover:text-admin-gold transition-all flex items-center gap-1 group-hover:translate-x-1 duration-300">
+          <button 
+            onClick={onViewDetails}
+            className="text-[12px] font-bold text-admin-text-primary hover:text-admin-gold transition-all flex items-center gap-1 group-hover:translate-x-1 duration-300"
+          >
             View Details <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>
         </div>

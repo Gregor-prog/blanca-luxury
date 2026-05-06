@@ -6,7 +6,7 @@ import { ProductFilterBar } from '@/components/admin/ProductFilterBar';
 import { ProductRow } from '@/components/admin/ProductRow';
 import { BatchActionBar } from '@/components/admin/BatchActionBar';
 import { ManageCategoriesPanel } from '@/components/admin/ManageCategoriesPanel';
-import { useGetAdminProductsQuery, useUpdateProductMutation } from '@/lib/store';
+import { useGetAdminProductsQuery, useUpdateProductMutation, useDeleteProductMutation } from '@/lib/store';
 import type { ProductListItem, ProductOrigin } from '@/lib/types';
 
 const ORIGIN_LABEL: Record<ProductOrigin, string> = {
@@ -44,6 +44,7 @@ export default function ProductsPage() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const { data, isLoading, isError } = useGetAdminProductsQuery({ page, limit: 24 });
   const [updateProduct] = useUpdateProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
 
@@ -66,6 +67,28 @@ export default function ProductsPage() {
   const isAllSelected = selectedIds.length === products.length && products.length > 0;
   const toggleAll = () => {
     setSelectedIds(isAllSelected ? [] : products.map((p) => p.id));
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedIds.length} product(s)?`)) return;
+    
+    try {
+      await Promise.all(selectedIds.map(id => deleteProduct(id).unwrap()));
+      setSelectedIds([]);
+    } catch (err) {
+      console.error("Failed to delete products:", err);
+      alert("An error occurred while deleting products.");
+    }
+  };
+
+  const handleUpdateStatusSelected = async (isActive: boolean) => {
+    try {
+      await Promise.all(selectedIds.map(id => updateProduct({ id, body: { isActive } }).unwrap()));
+      setSelectedIds([]);
+    } catch (err) {
+      console.error("Failed to update product statuses:", err);
+      alert("An error occurred while updating product statuses.");
+    }
   };
 
   return (
@@ -189,7 +212,11 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <BatchActionBar selectedCount={selectedIds.length} />
+      <BatchActionBar 
+        selectedCount={selectedIds.length} 
+        onDelete={handleDeleteSelected}
+        onUpdateStatus={handleUpdateStatusSelected}
+      />
       <ManageCategoriesPanel isOpen={isCategoriesOpen} onClose={() => setIsCategoriesOpen(false)} />
     </div>
   );

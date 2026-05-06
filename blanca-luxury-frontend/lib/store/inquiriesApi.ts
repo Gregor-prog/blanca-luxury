@@ -26,7 +26,7 @@ export const inquiriesApi = baseApi.injectEndpoints({
       transformResponse: (raw: PaginatedInquiries): NormalisedInquiries => {
         const byId: Record<string, Inquiry> = {};
         for (const i of raw.data) byId[i.id] = i;
-        return { ...raw, items: raw.data, byId };
+        return { ...raw.meta, items: raw.data, byId };
       },
       providesTags: (result) =>
         result
