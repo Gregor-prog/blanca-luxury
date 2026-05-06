@@ -6,8 +6,7 @@ on:
       - main
   workflow_dispatch:
 
-# Only one deployment at a time — queues rather than running in parallel.
-# Prevents the 409 Conflict from Azure's deployment lock.
+# Only one deployment at a time — prevents the 409 Conflict from Azure's deployment lock.
 concurrency:
   group: azure-deploy-api
   cancel-in-progress: false
@@ -29,11 +28,19 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install and build
+      - name: Build with pnpm
         working-directory: ./api
         run: |
           pnpm install --frozen-lockfile
           pnpm run build
+
+      - name: Install production dependencies (flat npm, no pnpm symlinks)
+        working-directory: ./api
+        env:
+          PRISMA_CLI_BINARY_TARGETS: debian-openssl-3.0.x
+        run: |
+          rm -rf node_modules
+          npm install --production
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -43,8 +50,6 @@ jobs:
             ./api/dist
             ./api/package.json
             ./api/prisma
-            ./api/pnpm-lock.yaml
-            ./api/.npmrc
             ./api/node_modules
           include-hidden-files: true
 
@@ -68,7 +73,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9C97505BB46444C1B90204A4CA138E92 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5DCAE8FE85604E03B79854130061FBE6 }}
 
-      - name: Configure App Service Settings
+      - name: Configure App Service
         run: |
           az webapp config appsettings set \
             --name blanca-luxury-api \
@@ -77,8 +82,11 @@ jobs:
               SCM_DO_BUILD_DURING_DEPLOYMENT=false \
               ENABLE_ORYX_BUILD=false \
               PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x \
-              WEBSITE_RUN_FROM_PACKAGE=1 \
               WEBSITE_NODE_DEFAULT_VERSION=22.x
+          az webapp config set \
+            --name blanca-luxury-api \
+            --resource-group paralearn-uni-backend-ckgmceezhmcfekdk_group \
+            --startup-file "node_modules/.bin/prisma migrate deploy && node dist/main.js"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
